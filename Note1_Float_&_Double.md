@@ -4,7 +4,7 @@ fraction 分数；少量，一小份
 
 ![](imgs/c0_float.png)
 
-![](/Users/zhangxianyu/JavaNotes/imgs/c01_float.png)
+![](imgs/c01_float.png)
 
 Result: 263.3 = 0100 0011 1000 0011 1010 0110 0110 0110 (32-bit)
 

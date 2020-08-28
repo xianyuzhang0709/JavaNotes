@@ -147,3 +147,5 @@ a>>>1 = 2147483643
 DOES NOT preserve the sign bit. 
 ```
 
+![](imgs/c502_shiftOp3.png)
+
