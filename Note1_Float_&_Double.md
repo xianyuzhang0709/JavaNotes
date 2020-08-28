@@ -1,5 +1,7 @@
 # Float and Double
 
+fraction 分数；少量，一小份
+
 ![](imgs/c0_float.png)
 
 ![](/Users/zhangxianyu/JavaNotes/imgs/c01_float.png)
