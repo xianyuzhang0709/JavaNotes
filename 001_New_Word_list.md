@@ -16,6 +16,10 @@ one's complement 反码
 
 Subtraction 减法
 
+heap 堆
+
+stack 栈
+
 
 
 Unary operator 一元操作符 —— `++`  `--`  `!`  

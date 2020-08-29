@@ -1,6 +1,6 @@
 ![](imgs/c103_operator1.png)
 
-##### 1. `++`  `--`
+##### 1. `++`  `--`  
 
 ​	每一次使用`++`  `--`，变量的值都已改变，即便是在一条语句之中。
 
@@ -33,7 +33,34 @@ class DivisionExample{
 }
 ```
 
-##### 3. Bitwise operators
+##### 3. Adding short
+
+使用`+`做数学运算时，如果有`double`，都casting to `double`。如果有`float`，都casting to `float`。如果有`long`，都casting to `long`。否则，全部转为`int`。
+
+example: 这个例子的错误是，变量a是short类型，但是它被赋值int value，所以要将它cast to shrot才可以赋值。
+
+```java
+class OperatorExample{  
+    public static void main(String args[]){  
+      short a=10;  
+      short b=10;  
+      //a+=b;//a=a+b internally so fine  
+      a=a+b;//Compile time error because 10+10=20 now int  
+      System.out.println(a);  
+}}  
+```
+
+```java
+class OperatorExample{  
+    public static void main(String args[]){  
+      short a=10;  
+      short b=10;  
+      a=(short)(a+b);//20, which is int now converted to short  
+      System.out.println(a);  
+}}  
+```
+
+##### 4. Bitwise operators
 
 Bitwise operators are used to perform manipulation of individual bits of a number. They can be used with any of the **integral types (char, short, int, etc)**. They are used when performing update and query operations of Binary indexed tree.
 
@@ -104,11 +131,11 @@ Bitwise Compliment Operation of 5
         step3 : +1 = 1010b  //so 1010 is -6d.
 ```
 
-### 4. Shift operators
+### 5. Shift operators
 
 These operators are used to shift the bits of a number left or right thereby multiplying or dividing the number by two respectively. They can be used when we have to multiply or divide a number by two. General format: `number shift_op number_of_places_to_shift;`
 
-#### **4.1 Signed Right shift operator (>>)** 
+#### **5.1 Signed Right shift operator (>>)** 
 
 Shifts the bits of the number to the right and fills 0 on voids(空虚空白处) left as a result. The leftmost bit depends on the sign of initial number. Similar effect as of dividing the number with some power of two.
 For example,
@@ -130,7 +157,7 @@ We preserve the sign bit.
 
 ![](imgs/c502_shiftOp1.png)
 
-#### 4.2 **Unsigned Right shift operator (>>>)**
+#### 5.2 **Unsigned Right shift operator (>>>)**
 
 Shifts the bits of the number to the right and fills 0 on voids left as a result. The leftmost bit is set to 0. 
 
