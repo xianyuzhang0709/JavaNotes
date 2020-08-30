@@ -27,13 +27,33 @@ The switch statement works with byte, short, int, long, enum types, String and s
 
 In other words, the switch statement tests the equality of a variable against multiple values. (switch语句针对多个值测试变量的相等性。)
 
-**Points:** 
+**A case label** can be :
 
-* The case value must be **literal** or **constant**. It doesn't allow [variables](https://www.javatpoint.com/java-variables).
+* A constant expression of type **char**, **byte**, **short**, or **int** 
+* An **enumerated constant**
+* A **string literal** (starting with Java 7)
 
-* The Java switch expression must be of *byte, short, int, long (with its Wrapper type), [enums](https://www.javatpoint.com/java-switch) and string*.
-* Each case statement can have a **break statement** which is **optional**. 
-* The case value can have a ***default label*** which is **optional**.
+```java
+String str = . . .; 
+switch (str.toLowerCase()) {
+    case "yes": // OK since Java 7 
+    					...
+    					break; 
+    ...
+}
+
+enum Size {SMALL, MEDIUM, LARGE, EXTRA_LARGE};
+Size sz = Suze.MEDIUM; //enumeric class
+switch (sz)
+{
+    case SMALL: // no need to use Size.SMALL 
+    					...
+    					break;
+    ...
+}
+```
+
+
 
 ```java
 switch(expression){    
