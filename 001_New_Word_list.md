@@ -22,6 +22,18 @@ stack 栈
 
 
 
+parentheses 圆括号 ()  /pəˈrɛnθəsɪs/
+
+braces 大括号 {} /breɪs/
+
+double quotes 双引号 ” “
+
+eg. A function is called by naming it, followed by a parenthesized list of arguments. 调用函数时，只需要使用函数名加上用圆括号括起来的参数表即可。
+
+eg. so this calls the function printf with the argument "hello, world\n". `printf` is a library function that prints output, in this case the string of characters between the quotes. 双引号内的字符串。
+
+
+
 Unary operator 一元操作符 —— `++`  `--`  `!`  
 
 Arithmetic operator 算数操作符 —— `+ - * / %`

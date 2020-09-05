@@ -839,8 +839,318 @@ static
 
 To guarantee the **uniqueness** of **class names**. 
 
+#### **4.7.2 Class Importation**
+
 A class can use:
 
 * all classes from its own package 
 * and all *public* classes from other packages.
+
+```java
+//方法一，包名.类名.方法 --> 完全限定名fully qualified name
+java.time.LocalDate today = java.time.LocalDate.now();
+//方法二
+import java.time.*;  //更准确是import java.time.LocalDate;
+LocalDate today = LocalDate.now();
+```
+
+如果两个不同类的相同方法，则把完整的包名写上。
+
+#### **4.7.3 Static Imports** 静态导入
+
+permits the importing of **static methods and fields**, not just classes. 导入静态方法和静态字段。
+
+```java
+import static java.lang.System.*;
+//使用System的静态方法exit(), 字段out
+out.println("Goodbye, World!"); // i.e., System.out
+exit(0); // i.e., System.exit
+```
+
+#### **4.7.4 Addition of a Class into a Package**
+
+put the name of the package at the top of your source file, *before* the code that defines the classes in the package. 
+
+```java
+package com.horstmann.corejava; //base/com/horstman/corejava
+public class Employee
+{
+  ...
+}
+```
+
+source file 要放在包路径之内，否则编译会出错。
+
+#### **4.7.5 Package Access**
+
+public 所有类都可以访问；
+
+private 只有定义它的类可以访问。
+
+没有标记，则只有包内类可以访问。
+
+#### **4.7.6 The Class Path**
+
+JAR = java archive (java归档)
+
+#### **4.7.7 Setting the Class Path**
+
+### **4.8 JAR Files**
+
+Java Archive (JAR) : When you package your application, you want to give your users a single file, not a directory structure filled with class files.
+
+JAR files are compressed, using the familiar ZIP compression format.
+
+#### **4.8.1 Creating JAR files**
+
+`jar options file1 file2 . . .`
+
+#### **4.8.2 The Manifest** 清单文件
+
+In addition to class files, images, and other resources, each JAR file contains a *manifest* file that **describes special features of the archive**.
+
+#### **4.8.3 Executable JAR Files**
+
+1. use the `e` option of the jar command to specify the *entry point* of your program—the class that you would normally specify when invoking the java program launcher:
+
+   `jar cvfe MyProgram.jar com.mycompany.mypkg.MainAppClass *files to add*`
+
+2. Alternatively, you can specify the *main class* of your program in the manifest, including a statement of the form: `Main-Class: com.mycompany.mypkg.MainAppClass` 不要加.java后缀
+
+Then, users can simply start the program as `java -jar MyProgram.jar`
+
+#### **4.8.4 Multi-Release JAR Files** 兼容性
+
+#### **4.8.5 A Note about Command-Line Options** 命令行选项
+
+The options of commands in the **Java Development Kit** : single dashes followed by multiletter option names. `java -jar . . .`  `javac -Xlint:unchecked -classpath . . .`
+
+The **jar** command : followed the classic option format of the `tar` command without dashes. `jar cvf . . .`  
+
+java 9之后，都是两个短横线。--version而不是-version。--class-path而不是-classpath。
+
+### **4.9 Documentation Comments** 文档注释 javadoc
+
+that generates **HTML documentation** from your source files.
+
+#### **4.9.1 Comment Insertion**
+
+#### **4.9.2 Class Comments**
+
+The class comment must be placed *after* any import statements, directly **before the class definition**.
+
+```java
+/**
+* A {@code Card} object represents a playing card, such
+* as "Queen of Hearts". A card has a suit (Diamond, Heart,
+* Spade or Club) and a value (1 = Ace, 2 . . . 10, 11 = Jack, * 12 = Queen, 13 = King)
+*/
+public class Card {...}
+```
+
+#### **4.9.3 Method Comments**
+
+precede the method that it describes. 放在方法之前。
+
+* `@param` *variable description*
+* `@return` *description*
+* `@throws` *class description* : this method may throw an exception.
+
+```java
+/**
+* Raises the salary of an employee.
+* @param byPercent the percentage by which to raise the salary (e.g., 10 means 10%)
+* @return the amount of the raise
+*/
+public double raiseSalary(double byPercent){...}
+```
+
+#### **4.9.4 Field Comments**
+
+You only need to document **public fields**—generally that means **static constants**. For example:
+
+```java
+/**
+* The "Hearts" card suit
+*/
+public static final int HEARTS = 1;
+```
+
+#### **4.9.5 General Comments** - for class
+
+1. The tag `@since` *text* makes a “since” entry. The *text* can be any description of the version that introduced this feature. For example, `@since 1.7.1`.
+
+2. Tags can be used in class documentation comments:
+
+* `@author` *name*
+
+* `@version` *text*
+
+  You can use hyperlinks to other relevant parts of the javadoc documentation, or to external documents, with the `@see` and `@link` tags.
+
+  The tag `@see` *reference* adds a hyperlink in the “see also” section. 以下是三种形式：
+
+  ```java
+  @see package.class#feature label //link to另一个类的方法或变量。使用(#)分开类和它的方法/它的变量
+  @see <a href="...">label</a>
+  @see "text"
+  ```
+
+  `@see` 可以写多个，但是必须写在一起。
+
+3. 可以在注释中的任何位置插入link`{@link package.class#feature label}`
+
+4. `{@index entry}` to add an entry to the search box.
+
+#### **4.9.6 Package Comments**
+
+*package* comments, you need to **add** a separate **file** in each package directory.
+
+1. SupplyaJavafilenamedpackage-info.java.Thefilemust contain an initial Javadoc comment, delimited with /** and */, followed by a package statement. It should contain no further code or comments.
+2. SupplyanHTMLfilenamedpackage.html.Alltextbetweenthe tags <body>. . .</body> is extracted.
+
+#### **4.9.7 Comment Extraction** 注释抽取
+
+### **4.10 Class Design Hints**
+
+1. *Always keep data private.*
+
+2. *Always initialize data.*
+3. *Don’t use too many basic types in a class.*
+4. *Not all fields need individual field accessors and mutators.*
+5. *Break up classes that have too many responsibilities.* 职责
+6. *Make the names of your classes and methods reflect their responsibilities.*
+7. *Prefer immutable classes.*
+
+## 五、Inheritance
+
+### **5.1 Classes, Superclasses, and Subclasses**
+
+#### **5.1.1 Defining Subclasses**
+
+keyword `extends` to denote inheritance.
+
+```java
+public class Manager extends Employee {
+      added methods and fields
+}
+```
+
+子类比父类拥有更多功能。
+
+#### **5.1.2 Overriding Methods** 覆盖/重写
+
+```java
+public double getSalary(){
+    double baseSalary = super.getSalary();
+    return baseSalary + bonus; //bonus是Manager的字段
+}
+//super表示要用superclass的.getSalary()方法 —— 要使用这个方法是因为子类不能直接访问父类的私有变量，只能通过public accessor method来获得。
+```
+
+#### **5.1.3 Subclass Constructors** 子类构造器
+
+```java
+public Manager(String name, double salary, int year, int month, int day){
+		super(name, salary, year, month, day);//子类构造器 调用 父类构造器
+		bonus = 0; 
+}
+//super(name, salary, year, month, day)的意思是: 调用父类Employee的构造器中带n,s,y,m,d的一个。
+```
+
+* `super`调用构造器，必须是本构造器的**第一句**。
+
+`this`的含义：
+
+* 表示隐式参数的引用 - to denote a reference to the implicit parameter。
+
+* 调用该类的其他构造器 - call another constructor of the same class. 
+
+  ```java
+  class Employee{
+    private static int nextId;
+    private int id;
+    private String name = "";
+    private double salary;
+    ...//初始化block - 设定nextId值为一个随机数；id = nextId; nextId++;
+    public Employee(String n, double s){
+      name = n;
+      salary = s;
+    }
+    public Employee(double s){
+      this("Employee#"+nextId, s);//调用参数为String，double的构造器
+    }
+  }
+  ```
+
+`super`的含义：
+
+* 调用超类的方法 - `super.getSalary()`
+* 调用超类的构造器 - `super(name, salary, year...);`
+
+一个对象变量可以指示多中实际类型的现象（比如e.getSalary()的e可以指代Employee或Manager对象）就叫**多态(polymorphism)**。An object variable (such as the variable e) can refer to multiple actual types is called *polymorphism.* 
+
+#### **5.1.4 Inheritance Hierarchies** 继承层次 (*inheritance chain*)
+
+#### **5.1.5 Polymorphism** 多态
+
+替换原则：超类对象出现的地方，都可以用子类对象替换。
+
+在java中，对象变量是多态的。一个Employee类的变量，可以引用Employee类的对象，也可以引用Empolyee类任何子类的对象（Manager，Executive，Secretary等)
+
+```java
+Manager boss = new Empolyee(...);
+Employee[] staff = new Employee[3];
+staff[0] = boss;  //staff[0]
+```
+
+此例中，变量staff[0]与boss引用同一个对象。编译器只将staff[0]看成是一个Employee对象。
+
+所以：
+
+```java
+boss.setBonus(5000);//ok
+staff[0].setBonus(5000);//Error
+```
+
+此外，不能把父类的对象赋值给子类变量。eg: `Manager m = staff[2];//Error`
+
+#### **5.1.6 Understanding Method Calls**
+
+#### **5.1.7 Preventing Inheritance: `Final` Classes and Methods**
+
+final类：不允许被扩展(inheritance)的类。
+
+final方法：子类不能覆盖(overriding)这个方法。
+
+* final方法的原因是：确保方法不会再子类改变语义。
+
+我们提倡在设计类层次的时候，仔细思考哪些类和方法应该设计为final。
+
+#### **5.1.8 Casting** for classes
+
+1. 只能在继承层次内进行casting，否则compile-time error
+2. 父类变子类之前，要检查是不是instanceOf.
+3. 一般最好别用强制类型转换。
+
+```java
+double b = 3.05;
+int a = (int) b;
+
+Employee e1 = new Employee(...);
+Manager boss = (Manager) e1;
+```
+
+使用强制类型转换的唯一原因：to use an object in its full capacity(功能) after its actual type has been temporarily forgotten.
+
+问题是：是否承诺过多(promise too much)？子类变父类可以，但是父类变子类就承诺过多，所以在casting之前要检查是否可以成功casting —— 用`instanceOf`
+
+```java
+if (staff[1] instanceof Manager) {
+		boss = (Manager) staff[1]; 
+ 	  ...
+}
+```
+
+#### **5.1.9 Abstract Classes**
 
