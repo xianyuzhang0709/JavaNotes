@@ -29,7 +29,7 @@ Polymorphism is derived from 2 Greek words: poly and morphs. The word "poly" mea
 
 **Runtime polymorphism** or **Dynamic Method Dispatch** is a process in which a call to an overridden method is resolved at runtime rather than compile-time.
 
-[另一部分笔记参见《000_Java_Core》的#Polymorphism部分](../000_Java_Core.md)
+[另一部分笔记参见《000_Java_Core》的#Polymorphism部分](../blob/master/000_Java_Core.md)
 
 # Overload vs overriade
 
