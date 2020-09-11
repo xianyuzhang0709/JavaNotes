@@ -8,16 +8,18 @@ Class Attributes
 
 Class methods
 
-### Encapsulation
+# Encapsulation
 
 The meaning of **Encapsulation**, is to make sure that "sensitive" data is hidden from users. To achieve this, you must:
 
 - declare class variables/attributes as `private`
 - provide public **get** and **set** methods to access and update the value of a `private` variable
 
-### Java Packages & API
+# Java Packages & API
 
 ## Polymorphism
+
+[]: 002_Keywords_in_java.md	"another notion"
 
 is a concept by which we can perform a *single action in different ways*.
 
@@ -28,4 +30,16 @@ Polymorphism is derived from 2 Greek words: poly and morphs. The word "poly" mea
 > If you overload a static method in Java, it is the example of compile time polymorphism. Here, **we will focus on runtime polymorphism** in java.
 
 **Runtime polymorphism** or **Dynamic Method Dispatch** is a process in which a call to an overridden method is resolved at runtime rather than compile-time.
+
+# Overload vs overriade
+
+Overload是构造器重构。
+
+Override是方法重写。
+
+![](imgs/OverridingVsOverloading.png)
+
+From 
+
+[Geeks for Geeks]: https://www.geeksforgeeks.org/polymorphism-in-java/
 

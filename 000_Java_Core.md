@@ -1096,7 +1096,7 @@ public Manager(String name, double salary, int year, int month, int day){
 
 替换原则：超类对象出现的地方，都可以用子类对象替换。
 
-在java中，对象变量是多态的。一个Employee类的变量，可以引用Employee类的对象，也可以引用Empolyee类任何子类的对象（Manager，Executive，Secretary等)
+在java中，**对象变量**是多态的。一个Employee类的变量，可以引用Employee类的对象，也可以引用Empolyee类任何子类的对象（Manager，Executive，Secretary等)
 
 ```java
 Manager boss = new Empolyee(...);
@@ -1114,6 +1114,16 @@ staff[0].setBonus(5000);//Error
 ```
 
 此外，不能把父类的对象赋值给子类变量。eg: `Manager m = staff[2];//Error`
+
+> The word **polymorphism** means having many forms.
+>
+> **Real life example of polymorphism:** A person at the same time can have different characteristic. Like a man at the same time is a father, a husband, an employee. So the same person posses different behaviour in different situations. This is called polymorphism.
+>
+> Polymorphism is considered as one of the important features of **Object Oriented Programming**. Polymorphism allows us to perform a single action in different ways. In other words, polymorphism allows you to define one interface and have multiple implementations. 
+>
+> 多态主要在is-a关系的类中。同一个对象变量，同一个方法，因为其被声明的烈性，而展现出不同的behavior
+>
+> 多态是overloading的结果。
 
 #### **5.1.6 Understanding Method Calls**
 

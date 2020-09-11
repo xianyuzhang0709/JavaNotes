@@ -20,6 +20,10 @@ heap 堆
 
 stack 栈
 
+asterisk *星号
+
+ampersand &
+
 
 
 parentheses 圆括号 ()  /pəˈrɛnθəsɪs/
@@ -31,6 +35,10 @@ double quotes 双引号 ” “
 eg. A function is called by naming it, followed by a parenthesized list of arguments. 调用函数时，只需要使用函数名加上用圆括号括起来的参数表即可。
 
 eg. so this calls the function printf with the argument "hello, world\n". `printf` is a library function that prints output, in this case the string of characters between the quotes. 双引号内的字符串。
+
+
+
+integer division truncates: any fractional part is discarded. 整数截除: 小数点部分舍掉。
 
 
 
