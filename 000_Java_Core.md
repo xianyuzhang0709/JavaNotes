@@ -1432,4 +1432,46 @@ n++; //此时，编译器会自动拆箱，然后自增运算，然后把结果�
 
 ### **5.5 Methods with a Variable Number of Parameters**
 
-参数数量可变的方法
+参数数量可变的方法。例如`printf()`这个方法：
+
+```java
+public class PrintStream
+{
+	public PrintStream printf(String fmt, Object... args) { return format(fmt,
+}
+```
+
+**The ellipsis ... is part of the Java code.** It denotes that the method can receive an arbitrary number of objects (in addition to the fmt parameter).除了fmt参数外。
+
+实际上`printf()`只接受两个参数。一个fmt，一个Object[]数组（如果接受了原始值，则自动装箱为对象）。 for the implementor of printf, the Object... parameter type is exactly the same as Object[].
+
+```java
+System.out.printf("%d %s", new Object[] { new Integer(n), "widgets" } );  //3 widgets
+```
+
+### **5.6 Enumeration Classes** 枚举类
+
+```java
+public enum Size {SMALL, LARGE}
+```
+
+The type defined by this declaration is actually a **class**. The class has **exactly four instances**—it is not possible to construct new objects.
+
+相等性测试：Therefore, you never need to use `equals` for values of enumerated types. Simply use `==` to compare them.
+
+枚举类构造器
+
+枚举类方法
+
+### **5.7 Reflection** 反射
+
+A program that can analyze the capabilities of classes is called *reflective*.
+
+you can use it to
+
+* Analyze the capabilities of classes at runtime
+* Inspect objects 检查对象 at runtime—for example, to write a single toString method that works for *all* classes 
+* Implement generic array manipulation code 泛型数组操作代码
+* Take advantage of Method objects that work just like function pointers in languages such as C++ (Method对象，
+
+它像C++的函数指针)
