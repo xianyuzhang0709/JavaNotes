@@ -71,29 +71,30 @@ There are eight *primitive types* in Java. Four of them are integer types; two a
 
 In Java, every variable has a *type*. You declare a variable by placing the type first, followed by the name of the variable. Here are some examples: 
 
- `double salary;`
-
- `int vacationDays;`
-
- `long earthPopulation;`
-
- ` boolean done;`
+```java
+double salary;
+int vacationDays;
+long earthPopulation;
+boolean done;
+```
 
 A variable name must begin with a letter and must be a sequence of letters or digits. *All* characters in the name of a variable are significant and *case is also significant. Spaces* cannot be used inside variable names. The length of a variable name is essentially unlimited. 
 
 #### **3.4.2 Initializing Variables** 
 
-`int vacationDays = 12; `
-
-`double salary = 65000.0;`
-
-`var vacationDays = 12; `
+```java
+int vacationDays = 12; 
+double salary = 65000.0;
+var vacationDays = 12;  //根据 赋的值类型 确定 变量类型
+```
 
 #### **3.4.3 Constants** 
 
 In Java, you use the keyword final to denote a constant. 
 
-**`final`**`double CM_PER_INCH = 2.54;`
+```java
+final double CM_PER_INCH = 2.54;
+```
 
 The keyword `final` indicates that you can assign to the variable once, and then its value is set once and for all. It is customary to name constants in all uppercase. 
 
@@ -127,18 +128,21 @@ The three dotted arrows denote conversions that may lose precision.
 
 Conversions in which loss of information is possible are done by means of casts. 
 
-`double x = 9.997; `
-
-`int nx = (int) x; `
+```java
+double x = 9.997; 
+int nx = (int) x; 
+```
 
 Now, the variable `nx` has the value `9` because casting a floating-point value to an integer discards the fractional part. 
 
 ![c302](imgs/c302.png)
 
-If you want to round a floating-point number to the nearest integer (which in most cases is a more useful operation), use the `Math.round` method: 
+If you want to **round a floating-point number** to the nearest integer (which in most cases is a more useful operation), use the `Math.round` method: 
 
-`double x = 9.997;`
-` int nx = (int) Math.round(x); `
+```java
+double x = 9.997;
+int nx = (int) Math.round(x); 
+```
 
 The return value of the round method is a long, and a long can only be assigned to an int with an explicit cast because there is the possibility of information loss. 
 
@@ -148,11 +152,11 @@ The return value of the round method is a long, and a long can only be assigned 
 
 #### **3.5.6 Increment and Decrement Operators** 
 
-`int n = 12; `
-
-`n++; `
-
-`++n;`
+```java
+int n = 12;
+n++;
+++n;
+```
 
 Since these operators change the value of a variable, they cannot be applied to numbers themselves. For example, `4++` is not a legal statement. 
 
@@ -191,17 +195,20 @@ Since `+=` associates right to left, the expression `a += b += c` means `a += (b
 
 ## **3.6 Strings**
 
-Conceptually, **Java strings are sequences of Unicode characters (Java strings are sequences of char values)**. For example, the string "Java\u2122" consists of the five Unicode characters J, a, v, a, and TM. Java does not have a built-in string type. Instead, the standard Java library contains a predefined class called, naturally enough, String. Each quoted string is an instance of the String class:
+Conceptually, **Java strings are sequences of Unicode characters (Java strings are sequences of char values)**. For example, the string "Java\u2122" consists of the five Unicode characters J, a, v, a, and TM. Java does not have a built-in string type. Instead, the standard Java library contains a **predefined class** called, naturally enough, String. <u>Each quoted string is an **instance** of the **String class**</u>:
 
-`String e = ""; // an empty string `
-
-`String greeting = "Hello";`
+```java
+String e = ""; // an empty string 
+String greeting = "Hello";
+```
 
 - [ ] 什么是built-in type.
 
 #### **3.6.1 Substrings**
 
-`String s = greeting.substring(0, 3);//0,1,2`
+```java
+String s = greeting.substring(0, 3);//0,1,2
+```
 
 this means from position 0 inclusive to position 3 exclusive.
 
@@ -231,7 +238,9 @@ this means from position 0 inclusive to position 3 exclusive.
 
 The String class gives no methods that let you *change* a character in an existing string. If you want to turn greeting into "Help!", you cannot directly change the last positions of greeting into 'p' and '!'. How are we going to modify the string? In Java, it is quite easy: Concatenate the substring that you want to keep with the characters that you want to replace.
 
-`greeting = greeting.substring(0, 3) + "p!";`
+```java
+greeting = greeting.substring(0, 3) + "p!";
+```
 
 Since you cannot change the individual characters in a Java string, the documentation refers to the objects of the String class as *immutable*. Just as the number 3 is always 3, the string "Hello" will always contain the code-unit sequence for the characters H, e, l, l, o. You cannot change these values. Yet you can, as you just saw, change the contents of the string *variable* greeting and **make it refer to a different string**, just as you can make a numeric variable currently holding the value 3 hold the value 4.
 
@@ -486,6 +495,8 @@ for (double[] row : matrix)
 //quick-and-dirty list of the elements of a two-dimensional array:
 System.out.println(Arrays.deepToString(a));
 //[[16, 3, 2, 13], [5, 10, 11, 8], [9, 6, 7, 12], [4, 15, 14, 1]]
+
+//
 ```
 
 #### **3.10.8 Ragged Arrays** 不规则数组
@@ -717,6 +728,8 @@ main方法用来构建程序要使用的对象。
 
 java的方法是**按值调用**的，即方法得到的是参数的一个**副本**。方法不能修改它**参数变量的内容**。
 
+**一个方法不能修改基本类型的参数，但是可以修改对象引用的参数。**
+
 ```java
 double percent = 10; 
 tripleValue(percent);//传入的是一个primitive type变量，percent的值不被方法改变，方法只复制percent然后计算然后输出
@@ -727,20 +740,20 @@ public static void tripleSalary(Employee x){  //类方法
 	x.raiseSalary(200);
 }
 harry = new Employee(...);
-tripleSalary(harry); //传入的是一个对象的引用。方法复制这个对象引用，改变了对象的state。但没有改变对象包含的引用。
+tripleSalary(harry); //传入的是一个对象的引用。方法复制这个对象引用，x和harry同时引用同一个对象。改变了对象的state。x不再使用。
 ```
 
 ```java
-//交换两个Employee的方法 --> 交换的是两个对象引用的副本，原来a,b两对象的引用没变。
+//交换两个Employee的方法swap(a,b);不会有效 --> 交换的是两个对象引用的副本，程序结束后副本不再使用，原来a,b两对象的引用没变。
 ```
 
 所以：
 
 java是按值调用。
 
-* 方法不能修改基本数据类型的参数
-* 方法可以改变对象参数的状态
-* 方法不能让一个对象参数引用一个新的对象。
+* 方法不能修改**基本数据类型**的参数
+* 方法可以改变**对象参数**的状态
+* 方法不能让一个**对象参数**引用一个新的对象。
 
 ### **4.6 Object Construction**
 
@@ -1164,3 +1177,259 @@ if (staff[1] instanceof Manager) {
 
 #### **5.1.9 Abstract Classes**
 
+A class which is declared as abstract is known as an **abstract class**. I
+
+- An abstract class must be declared with an **abstract** keyword.
+- It can have abstract and non-abstract methods.
+- It **cannot be instantiated**. 不能实例化
+- It can have constructors and static methods also.
+- It can have final methods which will force the subclass not to change the body of the method.
+
+首先，抽象类自身不能被实例化，它通过定义抽象方法，来给子类的相同方法占位。抽象类方法的内容为空，由子类具体实现。
+
+```java
+public abstract class Person(){
+     private String name; //抽象类Person可以有自己的字段
+   	 public Person(String name){//自己的构造器-->但不能实例化
+       this.name = name;
+     }
+  	 public abstract String getDescription(); //一个用于占位的，抽象方法
+  	 
+     public String getName(){ //一个具体的方法
+       return name;
+     }
+}
+```
+
+1. 拥有一个或多个抽象方法的类，**必须**被声明为抽象类。
+   而如果一个类没有抽象方法，它也可以被声明为抽象类。
+
+2. 抽象方法：用关键字abstract声明的方法，就是抽象方法，它不需要被实现，就像`getDescription()`这个方法。
+   * 抽象方法用于占位。它们在子类中被实现。实现的方式有两种：
+     * 子类可以实现部分抽象类方法（那么这个子类还是个抽象类）
+     * 子类也可以实现全部抽象类方法（这时这个子类就不是抽象类了）。
+   * 为什么一定要用抽象方法进行占位？
+     * 因为在如下例子中，如果用抽象类的对象变量p，来分别引用两个类的实例，如果抽象类中没有声明getDescription()方法，p就不能调用这个方法。
+
+抽象类不能构建对象，但是可以定义一个抽象类的**对象变量**。
+
+```java
+Person p = new Student("James","Math");//Person类型的变量p，引用了一个student类型的实例
+
+Person people = Person[2];
+people[0] = new Student("james","Math");
+people[1] = new Employee("jamie");
+
+for(Person p:people)
+  System.out.println(p.getName()+","+p.getDescription());
+//在这里，p永远不会调用Person类的对象，所以对于p[0],它调用的是Stduent的对象，getDescription()方法用的也是student的。
+```
+
+#### 5.1.10 Protected access 受保护的访问 - protected
+
+Java中**protected部分**对所有子类及同一个包中的所有类都可见。
+
+实际应用中，要谨慎使用受保护字段。因为可能会因为派生新类访问到你的手保护字段。如果你想修改你的类的内容，必然会影响别的程序员（破坏了封装）。so，使用**protected method**更好。
+
+1. Accessible in the class only (**private**).
+2. Accessible by the world (**public**).
+3. Accessible in the package and all subclasses (**protected**).
+4. Accessible in the package — the (unfortunate) default. No modifiers are needed.
+
+### 5.2 Object: the cosmic superclass 所有类的父类
+
+**可以用Object的变量引用任何类型的变量**：
+
+```java
+Object obj = new Student("james");
+```
+
+Object的变量 - 只能做各种值的泛型容器。如果要使用对象的原始类型：
+
+```java
+Student s = (Student) obj;
+```
+
+In Java, only the values of *primitive types* (numbers, characters, and boolean values) are **not objects**.
+
+All **array types**, no matter whether they are **arrays of objects** or **arrays of primitive types**, are class types that extend the Object class.
+
+#### 5.2.2 **The** `equals` **Method** : `x.equals(y)`
+
+在Object类中，用于检测一个对象是否等于另一个对象：`Object x.equals(Object y)`- 检测两个**对象的引用**是否相同。
+
+* 如果x和y都是null，则true
+* 有一个null，则false
+
+在子类中定义equals方法时，首先调用超类的equals。如果检测失败，对象就不可能相等。如果超类中的字段都相等，就需要比较子类的实例字段。
+
+#### **5.2.3 Equality Testing and Inheritance**
+
+**The Java Language Specification** requires that the `equals` method has the following **properties**:
+
+1. It is ***reflexive***:For any non-null reference x, `x.equals(x)`should return **true**.
+2. It is ***symmetric*** : For any references x and y, `x.equals(y)`should return **true** if and only if `y.equals(x)` returns **true**.
+3. It is ***transitive*** : For any references x, y, andz, if `x.equals(y)` returns **true** and `y.equals(z)` returns **true**, then `x.equals(z)` should return **true**.
+4. It is ***consistent*** : If the objects to which x and y refer haven’t changed, then repeated calls to `x.equals(y)` return the same value.
+5. For any non-null reference x, `x.equals(null)`should return **false**.
+
+Here is a recipe for **writing the perfect `equals` method**:
+
+1. ...... (p177)
+
+2. ……用==比较基本类型字段，用Object.equals比较对象字段。
+
+   ```java
+   return field1==field2 && Object.equals(field2,other.field2) && ...;
+   ```
+
+#### 5.2.4 `hashCode` Method
+
+A hash code is an **integer** that is derived from an object.
+
+**If you redefine the equals method, you will also need to redefine the hashCode method** for objects that users might insert into a hash table. (We discuss hash tables in Chapter 9.)
+
+The hashCode method should return an integer (which can be negative). Just combine the hash codes of the instance fields so that the hash codes for different objects are likely to be **widely scattered**. 要确保hashCode分布均匀。
+
+* First, use the null-safe method Objects.hashCode. It returns 0 if its argument is null and the result of calling hashCode on the argument otherwise. 
+
+* Also, use the static Double.hashCode method to avoid creating a Double object.
+
+* Even better, when you need to combine multiple hash values, call Objects.hash with all of them. It will call Objects.hashCode for each argument and combine the values.
+
+  ```java
+  public int hashCode()
+     {return Objects.hash(name, salary, hireDay); }
+  ```
+
+Your definitions of `equals` and `hashCode` must be **compatible**: If `x.equals(y)` is true, then `x.hashCode()` must return the same value as ` y.hashCode()`. 
+
+#### **5.2.5 The** `toString` **Method**
+
+returns a **string** representing the value of this object. 
+
+强烈建议为自定义的每一个类添加toString方法。自己受益，别人受益。
+
+### **5.3 Generic Array Lists**
+
+The **ArrayList** class is similar to an **array**, but it automatically adjusts its capacity as you add and remove elements, without any additional code.
+
+ArrayList is a *generic class* with a *type parameter*. ArrayList是一个有类型参数的泛型类。
+
+```java
+//声明
+ArrayList<Employee> staff = new ArrayList<Employee>();  //()内可填写容量。eg: 100
+ArrayList<Employee> staff = new ArrayList<>();
+var staff = new ArrayList<>();//会生成一个ArrayList<Object>.
+
+//添加元素
+staff.add(new Employee("james",...));
+
+//如果已经确定数组要存的元素数量
+staff.ensureCapacity(100);//capacity 100, size 0
+//或者再创建时就说明：
+ArrayList<Employee> staff = new ArrayList<Employee>(100); 
+  
+//trimToSize方法：把大小设定为「保存当前元素数量所需要的空间」
+```
+
+* 返回ArrayList的真实元素个数: `staff.size() `   
+  * **capacity**在一开始设置为100，但**真实size**由`.size()`返回。
+  * 类似于`array.length` —— 注意这里没有括号
+
+ArrayList并不是Java程序设计的一部分，而是有人设计的一个实用工具。
+
+**自动扩容的便利**也带来了**访问元素的复杂**。
+
+```java
+//add添加新元素
+
+//set替换已有的元素：用harry替换第i个元素
+staff.set(i,harry);
+//对比：数组中设置元素
+a[i] = harry;
+
+//get获取元素：
+staff.get(i);
+```
+
+* 即可以灵活扩展数组，又能方便访问数组：**ArrayList元素拷贝到Array中 —— ** `arrlist.toArray(arr)`
+
+```java
+var list = new ArrayList<X>();
+while(...){
+  x = ...;
+  list.add(x);
+}
+var a = new X[list.size()]; //创建一个X类型的数组a
+list.toArray(a);
+```
+
+* 在ArrayList中**插入**元素：`arrlist.add(index, ele)`
+
+```java
+int n = staff.size()/2; //中间位置
+staff.add(n,e);  //n及以后的元素，都会后移一位
+```
+
+* 在ArrayList中**删除**元素：`arrlist.remove(index)` ——位置n之后的所有元素前移一位
+
+> 插入删除元素，效率较低。如果要存储的元素较多，且经常插入、删除，需要用链表(Linked list)了。
+
+* for each**遍历**ArrayList：
+
+```java
+for(Employee e:staff)
+  do sth ...with e
+    
+for(int i=0;i<staff.size();i++){
+  Employee e = staff.get(i);
+  do sth ...with e
+}
+```
+
+### **5.4 Object Wrappers and Autoboxing** 对象的包装器和自动装箱
+
+当你想定义一个整型数组列表，但是却不允许你写`ArrayList<int>`，尖括号里不能是基本类型。
+
+如何把基本类型变成对象呢？
+
+**Wrapper包装器**： **Integer, Long, Float, Double, Short, Byte**, Character, and Boolean. (这6个类来自超类**Number**.)
+
+* 包装器**不可变**，一旦构造了包装器，就不允许更改包装在其中的值。
+
+* 包装器是final，不能派生子类。
+
+`var list = new ArrayList<Integer>()`
+
+但是它的效率远低于`int[]`，所以小集合可以这么构造。
+
+**自动装箱autoboxing：**在向list添加元素时
+
+```java
+list.add(3);
+
+//相当于
+list.add(Integer.valueOf(3)); //valueOf()设置value
+```
+
+**自动拆箱unboxing：**在调用list的元素时
+
+```java
+int n = list.get(i);
+//相当于
+list.get(i).intValue();  //读取value
+```
+
+自动装箱在表达式：
+
+```java
+Integer n = 3;
+n++; //此时，编译器会自动拆箱，然后自增运算，然后把结果装箱。
+```
+
+更多细节有待补充。。。
+
+### **5.5 Methods with a Variable Number of Parameters**
+
+参数数量可变的方法
