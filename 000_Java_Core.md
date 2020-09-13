@@ -1475,3 +1475,8 @@ you can use it to
 * Take advantage of Method objects that work just like function pointers in languages such as C++ (Method对象，
 
 它像C++的函数指针)
+
+![](/Users/zhangxianyu/JavaNotes/imgs/000_reflect.png)
+
+![](imgs/c000_class_class.png)
+
