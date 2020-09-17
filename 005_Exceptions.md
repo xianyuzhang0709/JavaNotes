@@ -186,3 +186,43 @@ try{
 内圈try-finally确保关闭输入流。外圈try-catch确保报告错误信息。
 
 finally子句主要用于清理资源，不要把控制流的语句放在finally子句。
+
+> From newCoder:
+>
+> ```java
+> public class Test
+> {
+>     public static int aMethod(int i)throws Exception//这个方法声明了会有异常，但不一定必然抛出异常
+>     {
+>         try{
+>             return i / 10;
+>         }
+>         catch (Exception ex)
+>         {
+>             throw new Exception("exception in a Method");
+>         } finally{
+>             System.out.printf("finally");
+>         }
+>     }
+>     public static void main(String [] args)
+>     {
+>         try
+>         {
+>             aMethod(0);
+>         }
+>         catch (Exception ex)
+>         {
+>             System.out.printf("exception in main");
+>         }
+>         System.out.printf("finished");
+>     }
+> }
+> ```
+>
+> 1、finally块一定会执行，无论是否try…catch。
+>
+> 2、finally前有return，会先执行return语句，并保存下来，再执行finally块，最后return。
+>
+> 3、finally前有return、finally块中也有return，先执行前面的return，保存下来，再执行finally的return，覆盖之前的结果，并返回。
+>
+> 本题最终结果：finally，finished。
