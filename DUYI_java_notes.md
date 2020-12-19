@@ -56,7 +56,7 @@ jdk里包含jre，安装时就不用安装jre了。
 
 * src.zip压缩文件：java源代码
 
-# 一、java程序
+# 一、java程序基础
 
 ```java
 class 类名{
@@ -470,46 +470,6 @@ x = (byte)(x + 3);//不会编译出错。
 ##### TODO：去网上找运算符号的优先级别，找符号运算题。
 
 ##### 综上：已学 [ 运算符号  变量空间  空间转换  数据类型 ]
-
-#### 5.n java知识体系
-
-**基础部分：JavaSE**
-
-​	面向对象的编程思想 ArrayBox  LinkedBox
-
-​	集合的使用、String类、
-
-​	I/O流，MVC，缓存机制，文件——数据库，数据库事务，
-
-​	反射注解，IOC
-
-**Level One：数据库+Web**
-
-​	数据库：本质就是文件，基本使用，性能，引擎，索引，锁
-
-​	JDBC：Java database connection  本质是I/O  手动设计一个ORM框架——原理   Mybatis
-
-​	Web：B/S分层架构，本质是Socket，IO，String解析
-
-​				手动设计一个容器（服务器）   浏览器--->服务器
-
-​				Tomcat：要了解它是怎么做出来的，而不只是会用。
-
-​						Servlet（底层原理：生命周期、托管技术）   JSP（看似一个文件资源，其实是一个操作自由，解析）
-
-​																											----> 手动设计一个Web框架
-
-​						Filter一个特殊的servlet，责任链设计模式    AJAX：异步发送请求的过程
-
-**Level Two：框架部分**
-
-​	SSM：Spring（IOC  AOP）   SpringMVC   MyBatis
-
-​	SSH：Spring   Struts  Hibernate
-
-​	Linux  Maven  Git SVN
-
-**分布式  大数据**
 
 ### 6. java语法结构
 
@@ -1050,6 +1010,13 @@ for(int[] a1: a){
 
 ![image-20201218190314333](DUYI_java_notes.assets/image-20201218190314333.png)
 
+#### 7.b 多维数组
+
+```java
+int[][][] a = {{{1,2},{3,4}},{{5,6,7,8},{1,2}},{{1,3},{4,7}}};
+int[][][] a = new int[3][][]; //可以，但是访问和赋值会发生 空指针异常NullPointerException (运行时异常)
+```
+
 
 
 #### 7.n 基本类型与引用类型在内存上的不同
@@ -1120,6 +1087,310 @@ x[0] = ?
    }
     ```
 
+### m. String[] args的使用
+
+main方法传参，给JVM使用。
+
+在方法中调用args参数：
+
+```java
+int length = args.length;  //args长度
+for(String v : args){
+  System.out.println(v);
+}
+```
+
+# 二、面向对象编程
+
+面向对象编程：
+
+1. 先定义(描述)一个类(型)
+2. 想要做的事，需要创建一个类型的对象来做事
+3. 这个对象做的事，叫方法
+
+类：
+
+* 创建类
+
+* 利用属性或方法，来描述这个类
+* 创建一个类的对象，对象调用属性/方法，来实现功能
+
+![image-20201219115401108](DUYI_java_notes.assets/image-20201219115401108.png)
+
+**方法和类，都有()，是用来传参数的。**
+
+> 堆内存：
+>
+> * 堆内存，只存东西，不能做任何的值交换
+>
+> * 凡是在堆内存中创建的空间，都有默认值
+> * 凡是new，都是在堆内存中创建空间。引用数据类型，都存在堆中，所以都要new。
+
+类创建一个对象：new
+
+* 对象.调用属性  可以存值/取值
+* 对象.调用方法  执行一次（存储/执行）
+
+### 1. 类的属性
+
+属性：**权限修饰符 [特征修饰符] 数据类型 属性名 [ = 值];**
+
+* 权限修饰符必须有：public、private、protected、默认不写
+
+* 修饰符：不写则默认——本包和本类对象可访问。public 公共。
+  * 权限修饰符
+* 属性：如果你在类中没有定义，那么一旦创建（在堆内存中创建的一切，都有默认值），都以默认值创建。
+
+```java
+class Person{
+	public String name;
+  public int age;
+  public String sex;
+}
+public class Test{
+  public static void main(String[] args){
+    Person p = new Person();
+    p.name = "wawa";
+    p.age = 12;
+    p.sex = "male";
+  }
+}
+```
+
+这里是创建了一个Person对象
+
+![image-20201218215245867](DUYI_java_notes.assets/image-20201218215245867.png)
+
+默认值：name = null;   age = 0;  sex = null;
+
+下图：Person p1 = new Person();
+
+![image-20201218215512910](DUYI_java_notes.assets/image-20201218215512910.png)
+
+下图：Person p1 = p;
+
+![image-20201218215619579](DUYI_java_notes.assets/image-20201218215619579.png)
+
+
+
+### 2. 类的方法
+
+方法：**权限修饰符  [特征修饰符]  返回值类型  方法名字  (参数列表)  [抛出异常]  [{.....方法体.....}]**
+
+* [ ]表示可有可无
+* 权限符不写，是默认效果
+* 无返回值，写void
+* 参数列表可以空，但是( )必须有
+
+* 一个方法 ----> 参数可以有多个。返回值只能有一个。
+
+**类的方法**，在内存中执行的过程情况：
+
+1. 方法存在哪里？—— 在**堆内存的对象空间内**
+2. 方法在哪里执行？—— **栈内存**中开辟一块**临时的方法执行空间**，执行完之后，空间清除。
+   * 堆里只能存，不能做值交换。所以任何执行过程，在栈内存执行。
+   * 调用时把a的值传递给x（图1是基本类型，图2是引用类型）
+   * 形参：方法执行时临时的变量空间
+   * 实参：实参传递内容给形参
+
+![image-20201218224557006](DUYI_java_notes.assets/image-20201218224557006.png)
+
+（ ↑ 图1    ↓ 图2）
+
+![image-20201219102955501](DUYI_java_notes.assets/image-20201219102955501.png)
+
+**方法参数及返回值**：
+
+* 如果方法调用的是**基本类型**，它是复制了一个值进去执行。所以方法结束，方法不会改变方法外实参的值。
+
+* 如果调用的是**引用类型**，方法执行时复制地址，改变了其中的值，那么方法结束，外部实参的值也被改变。
+
+![image-20201219103642855](DUYI_java_notes.assets/image-20201219103642855.png)
+
+* ↑（方法：交换两个数组元素）方法执行之后，红色部分删除。黑色部分留下。
+* ↓（方法：交换数组地址）方法内虽然完成了地址交换，但方法结束后，实参没变化。
+  * 所以要return两个数组地址：`int[][] result = [a,b];  return result;`
+  * 方法外：`x = value[0]; y = value[1];`
+
+![image-20201219104134301](DUYI_java_notes.assets/image-20201219104134301.png)
+
+![image-20201219104533762](DUYI_java_notes.assets/image-20201219104533762.png)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+![image-20201219104810065](DUYI_java_notes.assets/image-20201219104810065.png)
+
+![image-20201219105217828](DUYI_java_notes.assets/image-20201219105217828.png)
+
+```java
+public class TestFunctions{
+    public int[] changeArrayElement(int[] array){
+      .......
+    }
+}
+```
+
+### 3. 方法重载 Overload
+
+**概念**：一个类中的一组方法，相同的方法名，不同的参数列表。
+
+* 参数列表不同在哪里？参数个数、参数类型、参数顺序
+
+**作用**：同一个方法，可以执行不同的操作。灵活。
+
+**调用方法的顺序：**
+
+* 首先通过名字定位方法
+* 名字一致，通过参数列表确定方法
+* 如果没有一致的参数列表方法，让参数列表**自动转化**，找对应的方法
+  * Eg：你传一个char类型进去，但是只有int为参的方法，它会把char换成int，走int方法
+
+**JDK1.5之后：动态参数列表** —— 类型固定，个数不定
+
+* public void test( **int...x** )
+
+* 怎么用这些参数？动态参数列表的参数x本质是数组：int[] x = {1,2,3,...};  有length属性。
+  * 动态参数列表的方法，不能和相同意义的数组类型参数方法构成重载，因为它们是一样的。
+  * 动参方法，可以不传参，但是数组参方法，必须有参。
+  * 动参必须放在参数的后面，且只有一个。不能前面动参，再接别的参数（编译时无法识别什么时候动参结束）。
+
+### 4. 构造方法和this
+
+作用：构造一个类的对象
+
+写法：**权限修饰符 类名 (参数列表) [抛出异常]{ 创建对象; -->返回一个对象 }**
+
+* 方法名要和类名一致
+* 结构上，无返回值，但实际上返回了一个对象
+
+用法：new
+
+特点：
+
+1. 如果你的类中没有定义构造方法，系统会给你一个默认的无参数的构造方法。
+2. 如果你定义了构造方法，默认的方法就被覆盖。
+3. 构造方法也可以方法重载。
+
+建议：
+
+* 自己写类的构造方法时，建议把无参数构造方法，也写出来。（因为你写的会覆盖无参默认的构造方法）
+
+```java
+class Person{
+   private String name;
+   private int age;
+   private String sex;
+   
+   public Person(){}
+   public Person(String name, int age, String sex){
+      this.name = name;
+      this.age = age;
+      this.sex = sex;
+   }
+}
+```
+
+**this：**指代当前对象 —— 正在调用的对象，或正在创建的对象。(不一定是本类对象)
+
+* 解决属性和方法参数变量同名
+* **this**可以**调用：属性和方法**（不能调用块），也可调用构造方法——只能**在一个构造方法中调用另一个构造方法**，不能再普通方法中调用构造方法。
+  * 调用属性：this.属性 = 值;
+  * 调用普通方法：返回类型 变量名 = this.方法名(参数列表)
+  * 在一个构造方法中调用另一个构造方法：
+    * this.Person(); 省略了构造方法名字 ----->  **this(参数列表)**;
+    * **必须在第一行**。
+    * 构造方法不能来回互相调用
+    * 普通方法之间可以来回调用，但可能会产生：StackOverflowError栈溢出错误
+      * 方法执行在栈内存中，反复调用产生新内存空间去执行任务，一直无法执行完毕，最终导致栈内存溢出。
+* this可以在类的任何成员中写（属性、代码块、方法、构造方法）
+
+### 5. initialization block 初始化块（代码块）
+
+作用：跟方法一样，做事
+
+写法：{......}
+
+* 无参数  无返回值   无名字
+
+用法：在每一次我们**调用构造方法时**，构造方法执行前，系统自动执行一次初始化块。**创建对象前执行。**
+
+特点：
+
+* 无重载
+* 一个类中，可以定义多个程序块
+
+![image-20201219124239080](DUYI_java_notes.assets/image-20201219124239080.png)
+
+
+
+### 6. 类的加载和对象的创建（内存原理和机制）
+
+
+
+
+
+### n. Scanner类的用法
+
+![image-20201219141239598](DUYI_java_notes.assets/image-20201219141239598.png)
+
+* 会产生NuberFormatException异常
+
+```java
+import java.utils.Scanner;
+public static void main(String[] args){
+		Scanner in = new Scanner(System.in);
+  
+  	String name = in.nextLine();  //阻塞效果
+  	System.out.println("Please input your name:");//这个提示信息在前在后都可
+  
+    int password = in.nextInt(); //阻塞效果
+  	System.out.println("Please input your password:");
+}
+```
+
+但如果先读nextInt()，再读nextLine()，Line会得到空串，而不等待你输入。
+
+空回车问题 —— 原因是：
+
+![image-20201219133027978](DUYI_java_notes.assets/image-20201219133027978.png)
+
+new String("郑中拓")
+
+解决方法：
+
+1. 在nextInt() 后面加一个nextLine()读掉回车符。接着在nextLine()接收值。
+2. next()方法，不读回车，也留下回车在消息队列里。
+
+3. 前两个方法都不好，不干净。
+
+   * 更好的方法是，password和name都用nextLine()读取。
+   * 把String转化成int。用包装类：
+   * `int password2 = Integer.parseInt(password);`
+
+   > 包装类：int - Integer      char - Character      byte - Byte      float - Float
+   >
+   > int --> String的方法：int+""。拼接一个空串即可。
+   >
+   > * 5+5+"5"+5;  --->  "1055"
+
+
+
+
+
+
+
+
+
+### m. 练习
+
+死循环怎么写：while(true){....}  或者   for(;;){.....}
+
+1. 计算器  
+
+2. 设计Arraybox类（数组容器）
+   * 属性1：真实的数组
+   * 属性2：int size
+   * 方法：add  remove  get  获取有效元素个数size
 
 
 
@@ -1132,12 +1403,70 @@ x[0] = ?
 
 
 
-### n. 异常
 
-异常 —— 运行时异常
 
-InputMisMatchException 输入类型不匹配
 
-ArrayIndexOutOfBoundsException 数组索引越界（这个方法写在lang包里）
+# L、 java知识体系
 
-NegativeArraySizeException 数组长度负数异常
+**基础部分：JavaSE**
+
+​	面向对象的编程思想 ArrayBox  LinkedBox
+
+​	集合的使用、String类、
+
+​	I/O流，MVC，缓存机制，文件——数据库，数据库事务，
+
+​	反射注解，IOC
+
+**Level One：数据库+Web**
+
+​	数据库：本质就是文件，基本使用，性能，引擎，索引，锁
+
+​	JDBC：Java database connection  本质是I/O  手动设计一个ORM框架——原理   Mybatis
+
+​	Web：B/S分层架构，本质是Socket，IO，String解析
+
+​				手动设计一个容器（服务器）   浏览器--->服务器
+
+​				Tomcat：要了解它是怎么做出来的，而不只是会用。
+
+​						Servlet（底层原理：生命周期、托管技术）   JSP（看似一个文件资源，其实是一个操作自由，解析）
+
+​																											----> 手动设计一个Web框架
+
+​						Filter一个特殊的servlet，责任链设计模式    AJAX：异步发送请求的过程
+
+**Level Two：框架部分**
+
+​	SSM：Spring（IOC  AOP）   SpringMVC   MyBatis
+
+​	SSH：Spring   Struts  Hibernate
+
+​	Linux  Maven  Git SVN
+
+**分布式  大数据**
+
+# N、 异常Exception
+
+异常 —— 编译时异常、运行时异常
+
+运行时异常：
+
+1. InputMisMatchException 输入类型不匹配
+   * Input.nextInt(); 结果输入的是a。
+
+2. ArrayIndexOutOfBoundsException 数组索引越界（这个方法写在lang包里）
+
+3. NegativeArraySizeException 数组长度不合法（长度出现负数）
+
+4. NullPointerException 空指针异常
+   * 引用为null，还拿来用。
+5. NuberFormatException 数字格式化异常（把数字组成的字符串转化成数字，发现里面存的不是数字）
+
+# M、 错误Error
+
+计算机无法处理的事情。叫错误。
+
+计算机处理编译没问题，但是人为规定不合理，为异常。
+
+1. StackOverflowError栈溢出错误
