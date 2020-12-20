@@ -1,6 +1,6 @@
-类之间的 关系：
+# 类之间的 关系：
 
-* A    is-a   B   （泛化）继承  实现 
+* A   is-a   B   （泛化）继承  实现 
 
 * A  has-a B   （包含） 组合  聚合   关联
 
@@ -8,7 +8,12 @@
 
 ### 一、继承 extends: is-a
 
-1. 子类对象可以调用父类的（public和protected）的属性和方法。
+![image-20201220102757030](DUYI_java_ii_Class.assets/image-20201220102757030.png)
+
+1. 子类对象可以调用父类的（**public**和**protected**）的属性和方法。
+
+   * 构造方法不算子类继承过来的，只是在子类产生对象时，默认调用父类的构造方法。
+   * 程序块，在调用父构造方法之前，自动调用了父类块。
 
 2. 子类可添加自己的方法和属性。
 
@@ -102,13 +107,13 @@ java.lang包。
 
 5. **wait()** :  线程进入挂起等待状态  
 
-   * 存在方法重载：有三个带不同参数的wait()方法
+   * 存在方法**重载**：有三个带不同参数的wait()方法
 
 6. **notify()** :  线程唤醒
 
 7. **notifyAll()** :  唤醒所有
 
-8. **finalize()** :  protected方法，在对象被GC回收时，默认调用执行的方法。
+8. **finalize()** :  protected方法，在对象被GC回收时，默认调用执行的方法。（析构函数）
 
    * ```java
      protected void finalize(){}
@@ -130,5 +135,403 @@ java.lang包。
 
 #### 2. 继承写法用法都不难，问题是什么时候用继承？内存原理了解了？super和this的特点？
 
+#### n. 包
 
+```java
+package com.horstman.corejava;
+```
+
+package只能有一个，import可以写多个。package写在最前。
+
+### 二、包含 has-a (组合 聚合 关联)
+
+组合：人和大脑、人和心脏（整体和部分不可分割，要出现都出现，要消亡都消亡）
+
+聚合：汽车和轮子  电脑和主板（整体和部分  在创建时可以分开的）
+
+关联：人又汽车  人有电脑（可以分割，后来在一起）
+
+### 三、依赖 use-a 
+
+Eg：屠夫 杀 猪。
+
+因为一件事联系在一起，事情完成，关系结束。
+
+java程序体现：**一个类的方法中使用到另一个类的对象。**形式：
+
+* 在方法中传递参数
+* 在方法中自己创建
+
+### 四、设计类的原则：高内聚，低耦合
+
+耦合度：最紧密是    继承（实现）> 包含 > 依赖
+
+例子1：学生在机房使用电脑
+
+* 有一个机房
+* 有一台电脑  电脑有开机/关机状态  电脑被打开  电脑被使用中  电脑被关闭
+* 有一个学生
+* 学生进入机房使用电脑
+
+扩展：
+
+* 机房内5台电脑
+* 学生进入机房选一太关闭的电脑使用
+* 学生5个，陆续进入机房
+
+例子2：汽车测速器
+
+
+
+
+
+![image-20201220112717652](DUYI_java_ii_Class.assets/image-20201220112717652.png)
+
+类，有权限修饰符，也可能有特征修饰符final
+
+# 修饰符
+
+![image-20201220113025912](DUYI_java_ii_Class.assets/image-20201220113025912.png)
+
+### 一、 权限修饰符: public / protected / 默认不写 / private
+
+|                                                              |               权限修饰符                |   特征修饰符   |
+| :----------------------------------------------------------: | :-------------------------------------: | :------------: |
+|                            **类**                            |           public /  默认不写            | final / static |
+|                     (类的) **构造方法**                      | public / protected / 默认不写 / private |                |
+|                       (类的) **方法**                        | public / protected / 默认不写 / private | final / static |
+|                      (类的) **程序块**                       |                 （无）                  |     static     |
+| (类的全局变量)**属性**<br />- 存在堆内存的对象空间 / 方法区的静态元素区 - |            public / private             | final / static |
+|      (方法里的) **变量**<br />- 存在栈内存的临时空间 -       |                 （无）                  |     final      |
+
+#### 1. 权限修饰符 所表示的 范围：
+
+|  权限修饰符   | 范围（谁可以访问你？）                    |
+| :-----------: | :---------------------------------------- |
+|  **public**   | 本类 同包 子类 任意类里(创建对象就可访问) |
+| **protected** | 本类 同包 子类(↓)                         |
+| **默认不写**  | 本类 同包                                 |
+|  **private**  | 本类                                      |
+
+**同包**：严格地在同一个包里，不能是在同大包不同小包。
+
+**protected**：通过子类对象，在子类范围内访问父类的受保护方法，可以。
+
+* 在子类内，创建父类对象访问父的protected方法，也不行。
+* 在（父和子类的）外部，通过子类对象，访问父类protected方法，不行。
+
+### 二、特征修饰符: final / static / abstract / nativ ...
+
+#### 1. final
+
+* **final 类**：不能被子类继承 —— 通常是定义好的工具类，比如：Math类、Scanner类、Integer类、String类
+
+* **final 方法**：不能被子类重写
+
+* **final 属性**：即便没赋值，也有默认值，所以必须赋初值（否则报错）
+
+* **final 变量**：变量声明后，只有一次赋值机会，一旦赋值不能再改变 —— 相当于常量。
+
+  * ```java
+    public void testNum(final int[] a){....}  //也可以，表示a在方法内不能被改变
+    ```
+
+> final 属性 和 final 变量：
+>
+> ①一旦赋值，不再能修改。      ②变量或属性：如果是基本类型，则不能改；如果是引用类型，地址不能改，但值可以改。
+
+#### 2. static 静态
+
+静态元素，在创建类时就完成了加载和初始化。它**属于类**，不属于任何一个对象。可以通过类名字直接访问，也可以通过对象直接访问。
+
+静态成员之间可以互相访问。静态成员不可以访问一般方法（因为你不知道找哪个对象的方法）。也不能用this和super（因为这俩指代对象）
+
+* 静态常量使用场景：private static final 属性 = 0;
+
+内存管理：栈内存用完就回收，对内存用GC回收，静态元素区GC无法管理。静态元素常驻内存。
+
+![image-20201220151143311](DUYI_java_ii_Class.assets/image-20201220151143311.png)
+
+* **static 属性**：
+* **static 方法**：
+* **static 块**：(静态块)
+* **static class**：(内部类)
+
+```java
+
+```
+
+
+
+### 三、java面向对象三大特性：继承 封装 多态 （第四：抽象）
+
+private : **封装** —— 把一些数据和方法进行包装
+
+* 目的：封装执行过程，保护数据和执行过程，隐藏执行细节，增强复用性
+
+所以：
+
+* 属性，全部private
+* public方法，提供功能
+* 所有属性的访问和修改 --->
+  *  age ---> setAge()和getAge()方法来实现
+
+Spring： IOC——对象的控制权是别人的。向别人要，别人帮你创造对象。DI依赖注入——帮你赋值。
+
+### 四、设计模式23种之一：单例模式singleton
+
+设计模式是通用的代码书写方案，确保代码可读性、复用性、可靠性、可扩展性
+
+三类：
+
+1. 创建型模式 5 ---> 用于解决对象创建的过程
+
+   单例模式   工厂方法模式   抽象工厂模式   创建者模式   原型模式
+
+2. 结构型模式 7 ---> 把类或对象通过某种形式结合在一起，构成某种复杂但更合理的结构
+
+   适配器模式   装饰者模式   代理模式  外观模式   桥接模式  组合模式   享元模式
+
+3. 行为型模式 11 ---> 解决类或对象之间的交互，合理优化类或对象之间的关系
+
+   观察者模式   模板模式   策略模式   责任链模式  解析器模式  迭代子模式  命令模式  状态模式  备忘录模式  访问者模式  中介者模式
+
+#### 1. 单例模式
+
+一个类，我们希望**它只会创建一个对象**。
+
+把这一个对象直接创建在类的属性里：
+
+```java
+class SingleTon{
+		private SingleTon single = new SingleTon();
+}
+```
+
+-----> 这会导致StackOverflowError栈内存溢出。堆内存溢出是OutOfMemory。
+
+因为创建对象时执行构造方法 ---> 在栈内存执行 ---> 执行时又要new一个新对象，执行新的构造方法 ----> 最终导致栈内存溢出（栈小堆大，栈先溢出）。
+
+![image-20201220182804470](DUYI_java_ii_Class.assets/image-20201220182804470.png)
+
+把对象创建放在静态属性里：静态对象只加载一次。
+
+```java
+class SingleTon{
+  //把唯一的对象，创建在static属性中
+  private static SingleTon single = new SingleTon();  //立即加载: 饿汉式
+  
+  //让构造函数私有，这样就不能随便构造新对象
+  private SingleTon(){}
+  
+  //写一个获得本对象的public静态方法: --> 本方法通过类名即可访问，不需要对象
+  public static SingleTon getSingleTon(){  //单例模式规约：get方法名字可以是 ①get类名 ②newInstance
+     return single;
+  }
+}
+```
+
+于是就需要一个静态方法（属于类的方法，直接用类名就可以访问，不需要非要通过对象访问），来让用户访问到这个唯一对象——却不能随意更改它。
+
+访问这个唯一的对象：
+
+```java
+class Test{
+  public static void main(String[] agrs){}
+  	//SingleTon s = SingleTon.single; 如果类里的属性是public，可以这么访问
+  	SingleTon s = SingleTon.getSingleTon();//得到了single的地址引用，single不能被改变，只能被访问
+}
+```
+
+> 总结单例模式实现方法：
+>
+> 1. 把构造方法私有。
+> 2. 私有、静态  的属性 = new 类(); 
+>    * 唯一对象生成在类的静态属性里（独此一份，且不会溢出，因为它再怎么内部反复调用自己，也都在指代它自己）
+> 3. 共有、静态  的方法，返回该对象。 提供该对象的访问功能。
+
+单例模式：
+
+* 饿汉式（立即加载）对象启动就加在 --- 我们刚写的就是饿汉式
+  * 好：不会空指针异常（对象还没有，就要用）。
+  * 坏：服务器承载压力过大
+* 懒汉式（延迟加载）对象什么时候用才加载
+  * 好：可能操作不好，产生问题导致异常
+  * 坏：服务器压力不大，不会浪费空间
+* 生命周期托管（单例对象由别人帮助我们处理）对象加载过程交给别人
+
+饿汉式：类加载时，就new了这个对象。`private static SingleTon single = new SingleTon();`
+
+懒汉式：类加载时，不创建对象。在getSingleTon()方法里才创建。
+
+```java
+class SingleTon{   //懒汉式 -- 延迟加载
+   private static single;
+   private SingleTon(){}
+   public static SingleTon getSingleTon(){
+     if(single==null){
+       single = new SingleTon();
+     }
+     return single;
+   }
+}
+```
+
+### 二、特征修饰符：final static abstract native ...
+
+#### n. 类加载的顺序过程
+
+```java
+class Animal{
+   private String test = "AnimalTest";
+   private static String staticTest = "AnimalStaticTest";
+   public Animal(){
+      System.out.println("Animal无参数构造方法");
+   }
+   {
+      this.test();//普通块调用普通方法
+      System.out.println("Animal普通块");
+   }
+   static{ 
+      staticTest();    //静态元素可以访问静态元素，但不可访问普通元素。也可以写为: Animal.staticTest();
+      System.out.println("Animal静态块" + staticTest);  //这里调用了静态方法和静态属性
+   }
+   public void test(){
+      System.out.println("Animal普通方法");
+   }
+   public static void staticTest(){
+      System.out.println("Animal静态方法");
+   }
+}
+
+class Person extends Animal{
+   //子类可以有跟父类重名的属性，这不叫重写。如果有就用自己的，没有就用父的。
+   private String test = "PersonTest";
+   private static String staticTest = "PersonStaticTest";
+   public Person(){
+      System.out.println("Person无参数构造方法");
+   }
+   {
+      this.testP();
+      System.out.println("Person普通块"+test);
+   }
+   static{ 
+      staticTest();
+      System.out.println("Person静态块"+staticTest);
+   }
+   public void testP(){
+      System.out.println("Person普通方法");
+   }
+   public static void staticTest(){
+      System.out.println("Person静态方法");
+   }
+}
+
+public class Test{
+   public static void main(String[] args){
+		  new Person();//这里发生了什么？创建对象时发生了什么？
+   }
+}
+//结果: 先出静态，后出非静态。先出父，后出子。
+```
+
+对象创建之前，类先加载：
+
+1. 加载类模板：先加载父类，后加载子类： (先把东西摆放好) 
+
+   * 加载父类静态成员：
+     * 方法区：Animal类模板 { 普通属性、普通方法、普通块、构造函数 } 
+     * 静态区：Animal静态空间 { 静态属性、静态方法、静态块}                     (按顺序)
+     * 然后**执行父类静态块**
+
+   * 加载子类静态成员：
+     * 方法区：Person类模板 { 普通属性、普通方法、普通块、构造函数 }
+     * 静态区：Person静态空间 { 静态属性、静态方法、静态块}
+     * 然后**执行子类静态块**
+
+2. 创建对象空间：
+
+   * 加载父类的非静态成员：
+     * 加载Animal类的普通属性、普通方法、普通块、构造函数                     （按顺序）
+       * 普通方法和构造函数并不存储在这里，这里只记录了类模板中对应方法的地址
+     * **执行父类普通块**，**执行父类构造函数**
+
+   * 加载子类非静态成员：
+     * 加载Person类的普通属性、普通方法、普通块、构造函数
+     * **执行子类普通块**，**执行子类构造函数**
+
+3. 把对象空间的地址交给 接收它的变量
+
+```java
+//结果:
+Animal静态方法
+Animal静态块AnimalStaticTest  //Animal 静态方法 + 静态块 + 静态属性
+Person静态方法
+Person静态块PersonStaticTest  //Person 静态方法 + 静态块 + 静态属性
+Animal普通方法
+Animal普通块                  //Animal 普通块(调用普通方法)
+Animal无参数构造方法           //---Animal构造---
+Person普通方法
+Person普通块PersonTest        //Person 普通块(调用普通方法)
+Person无参数构造方法           //---Person构造---
+```
+
+![image-20201220213029943](DUYI_java_ii_Class.assets/image-20201220213029943.png)
+
+```java
+//--第3步完--
+Animal静态方法
+Animal静态块AnimalStaticTest 
+//--第6步完--
+Person静态方法
+Person静态块PersonStaticTest 
+//--第9步完--
+Animal普通方法
+Animal普通块             
+//--第9步完--
+Animal无参数构造方法          
+//--第11步完--
+Person普通方法             
+Person普通块PersonTest   
+//--第11步完--
+Person无参数构造方法             
+```
+
+针对第9和第11步：逐步加载，一起执行。
+
+#### 3. abstract 抽象的 (只有概念，没有具体执行)
+
+抽象类：abstract修饰。
+
+抽象方法：只有方法结构，没有执行体。abstract修饰。
+
+* 抽象类不是必须有抽象方法。
+* 抽象方法可以放在 抽象类(abstract class) 或 接口(interface) 中。
+* 普通类不允许含有抽象方法。
+
+```java
+public abstract class Animal{
+   public abstract void eat();
+}
+```
+
+##### 3.1 抽象类
+
+通常用来描述事物，但还不够具体。
+
+![image-20201220220438450](DUYI_java_ii_Class.assets/image-20201220220438450.png)
+
+![image-20201220224130949](DUYI_java_ii_Class.assets/image-20201220224130949.png)
+
+![image-20201220224427828](DUYI_java_ii_Class.assets/image-20201220224427828.png)
+
+```java
+public interface Test{}
+```
+
+接口、抽象类、普通类之间的关系：
+
+![image-20201220224733316](DUYI_java_ii_Class.assets/image-20201220224733316.png)
+
+![image-20201220225049479](DUYI_java_ii_Class.assets/image-20201220225049479.png)
 
