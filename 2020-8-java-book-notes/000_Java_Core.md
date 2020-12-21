@@ -1101,7 +1101,7 @@ public Manager(String name, double salary, int year, int month, int day){
 * 调用超类的方法 - `super.getSalary()`
 * 调用超类的构造器 - `super(name, salary, year...);`
 
-一个对象变量可以指示多中实际类型的现象（比如e.getSalary()的e可以指代Employee或Manager对象）就叫**多态(polymorphism)**。An object variable (such as the variable e) can refer to multiple actual types is called *polymorphism.* 
+一个对象变量可以指示多种实际类型的现象（比如e.getSalary()的e可以指代Employee或Manager对象）就叫**多态(polymorphism)**。An object variable (such as the variable e) can refer to multiple actual types is called *polymorphism.* 
 
 #### **5.1.4 Inheritance Hierarchies** 继承层次 (*inheritance chain*)
 

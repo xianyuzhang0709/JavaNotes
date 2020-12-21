@@ -1470,14 +1470,18 @@ public class Test{
 
 1. InputMisMatchException 输入类型不匹配
    * Input.nextInt(); 结果输入的是a。
-
 2. ArrayIndexOutOfBoundsException 数组索引越界（这个方法写在lang包里）
-
-3. NegativeArraySizeException 数组长度不合法（长度出现负数）
-
+3. NegativeArraySizeException 数组长度不合法
+   * 长度出现负数  eg：new int[-2]
 4. NullPointerException 空指针异常
-   * 引用为null，还拿来用。
-5. NuberFormatException 数字格式化异常（把数字组成的字符串转化成数字，发现里面存的不是数字）
+   * 对象为空，还拿来用。Person p = null; p.toString()--->异常
+5. NuberFormatException 数字格式化异常
+   * 把数字组成的字符串转化成数字，发现里面存的不是数字
+6. ArithmeticException 算数异常
+   * 10/0  整数不可以除以0
+7. ClassCastException 造型异常
+   * Object o = new Teacher();
+   * Student s =  (Student)o; //向下造型时，对象类型与真实类型不匹配
 
 # M、 错误Error
 

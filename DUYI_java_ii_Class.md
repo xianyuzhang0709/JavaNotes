@@ -377,7 +377,51 @@ class SingleTon{   //懒汉式 -- 延迟加载
 }
 ```
 
-### 二、特征修饰符：final static abstract native ...
+
+
+#### 2. 缺省适配器模式Adapter
+
+有接口的好处是统一管理。可是如果接口要增加方法，所有子类也必须增加方法。
+
+我们之前写的LInkedBox类是对接口Box的实现。所以用的是implements。
+
+而我们现在要加一个二者之间的**抽象类：**这就是适配器
+
+1. **把不太重要的方法削减出去（它自己具体化），让一些子类去找合适自己的用。**
+2. 把子类里重复的代码放在这个适配器抽象类里去写，子类直接调用父类方法即可。
+
+```java
+public abstract class AbstractBox implements Box{
+    public boolean add(int element);
+    public int remove(int index);
+    public int get(int index);
+    public int size();
+    
+    public void add(int index, int element){
+      throw new 自定义Exception;
+    }
+    public void addAll(Box){
+      throw new 自定义Exception;
+    }
+}
+```
+
+这个抽象类实现了接口interface，并且另外增加了两个方法。子类则extends这个类即可。子类可以实现接口，但是如果接口要增加方法，就必须让子类都实现这些方法。适配器的作用就是，它实现接口，而让子类去继承它，就不会有那么多（必须实现的）限制。
+
+而这两个方法：
+
+* 子类可以不写，如果不写又想直接调用，会抛出异常，所以  想用就必须重写。
+* 可以不写，因为父类已经把这两个类设置为具体方法，而不是抽象的。
+
+
+
+
+
+
+
+
+
+### 五、特征修饰符：final static abstract native ...
 
 #### n. 类加载的顺序过程
 
@@ -499,11 +543,13 @@ Person无参数构造方法
 
 针对第9和第11步：逐步加载，一起执行。
 
+这部分是虚拟机的工作原理。以上依然很多不准确。
+
 #### 3. abstract 抽象的 (只有概念，没有具体执行)
 
-抽象类：abstract修饰。
+**抽象类：abstract修饰。**
 
-抽象方法：只有方法结构，没有执行体。abstract修饰。
+**抽象方法：abstract修饰。只有方法结构，没有执行体。**
 
 * 抽象类不是必须有抽象方法。
 * 抽象方法可以放在 抽象类(abstract class) 或 接口(interface) 中。
@@ -511,7 +557,7 @@ Person无参数构造方法
 
 ```java
 public abstract class Animal{
-   public abstract void eat();
+   public abstract void eat();  //抽象类没有执行体
 }
 ```
 
@@ -529,9 +575,50 @@ public abstract class Animal{
 public interface Test{}
 ```
 
-接口、抽象类、普通类之间的关系：
+##### 3.2 接口、抽象类、普通类之间的关系
 
 ![image-20201220224733316](DUYI_java_ii_Class.assets/image-20201220224733316.png)
 
 ![image-20201220225049479](DUYI_java_ii_Class.assets/image-20201220225049479.png)
+
+##### 3.3 抽象类和接口的知识回顾
+
+![image-20201221130456037](DUYI_java_ii_Class.assets/image-20201221130456037.png)
+
+![image-20201221130832111](/Users/zhangxianyu/Java_Notes/DUYI_java_ii_Class.assets/image-20201221130832111.png)
+
+##### 3.4 案例
+
+![image-20201221142834689](DUYI_java_ii_Class.assets/image-20201221142834689.png)
+
+数据结构之链式结构：
+
+* 单向链表 A -> B -> C -> ...
+* 双向链表 A <-> B <-> C <-> ...
+* 环形链表 
+
+![image-20201221143104889](DUYI_java_ii_Class.assets/image-20201221143104889.png)
+
+### 六、多态
+
+![image-20201221202216501](DUYI_java_ii_Class.assets/image-20201221202216501.png)
+
+5. 这里的意思是：
+
+   * **Person类型的变量p，指向一个Teacher类的对象。**
+
+   * **子类对象，可以赋值给超类变量**。但是超类对象 引用给 子类变量，会导致方法调用时出错。
+
+6. 强制向下转型时，可能会造成运行时异常（ClassCastException类造型异常）
+
+   * 比如：Student s = (Student) o;  //编译没问题，但是运行会出问题
+   * 必须是父子类关系才可以造型
+
+7. 如果想避免异常，可以进行**instanceof判断**。
+
+   * 用法：**对象 instanceof 类 --> 返回结果为true/false**
+
+![image-20201221203750739](DUYI_java_ii_Class.assets/image-20201221203750739.png)
+
+* Student s = (Student) o;  //编译没问题，但是运行时异常 —— ClassCastException类造型异常
 
