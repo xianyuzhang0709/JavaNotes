@@ -204,18 +204,18 @@ java程序体现：**一个类的方法中使用到另一个类的对象。**形
 | (类的全局变量)**属性**<br />- 存在堆内存的对象空间 / 方法区的静态元素区 - |            public / private             | final / static |
 |      (方法里的) **变量**<br />- 存在栈内存的临时空间 -       |                 （无）                  |     final      |
 
-#### 1. 权限修饰符 所表示的 范围：
+下图：权限修饰符 所表示的 范围
 
 |  权限修饰符   | 范围（谁可以访问你？）                    |
 | :-----------: | :---------------------------------------- |
-|  **public**   | 本类 同包 子类 任意类里(创建对象就可访问) |
-| **protected** | 本类 同包 子类(↓)                         |
-| **默认不写**  | 本类 同包                                 |
+|  **public**   | 本类 本包 子类 任意类里(创建对象就可访问) |
+| **protected** | 本类 本包 子类(↓)                         |
+| **默认不写**  | 本类 本包                                 |
 |  **private**  | 本类                                      |
 
-**同包**：严格地在同一个包里，不能是在同大包不同小包。
+**本包**：严格地在同一个包里，不能是在同大包不同小包。
 
-**protected**：通过子类对象，在子类范围内访问父类的受保护方法，可以。
+**protected**：在子类范围内，通过子类对象，访问父类的受保护方法，可以。
 
 * 在子类内，创建父类对象访问父的protected方法，也不行。
 * 在（父和子类的）外部，通过子类对象，访问父类protected方法，不行。
@@ -392,11 +392,13 @@ class SingleTon{   //懒汉式 -- 延迟加载
 
 ```java
 public abstract class AbstractBox implements Box{
+    //接口定义的抽象方法继续保留
     public boolean add(int element);
     public int remove(int index);
     public int get(int index);
     public int size();
     
+    //自己定义更多方法 让子类根据需求自行实现这部分内容  子类extends这个适配器
     public void add(int index, int element){
       throw new 自定义Exception;
     }
@@ -406,18 +408,14 @@ public abstract class AbstractBox implements Box{
 }
 ```
 
-这个抽象类实现了接口interface，并且另外增加了两个方法。子类则extends这个类即可。子类可以实现接口，但是如果接口要增加方法，就必须让子类都实现这些方法。适配器的作用就是，它实现接口，而让子类去继承它，就不会有那么多（必须实现的）限制。
+这个抽象类实现了接口interface，并且另外增加了两个方法。子类则extends这个类即可。
+
+子类可以实现接口，但是如果接口要增加方法，就必须让子类都实现这些方法。适配器的作用就是，它实现接口，而让子类去继承它，那么子类已实现接口前面的需求，而后面新增的功能，都在适配器这个父类里——它可以根据需要进行重写，或者不理睬（反正不重写就不能用，可以调，但不能用，一调用就只有异常报出，没有别的功能实现）。
 
 而这两个方法：
 
 * 子类可以不写，如果不写又想直接调用，会抛出异常，所以  想用就必须重写。
 * 可以不写，因为父类已经把这两个类设置为具体方法，而不是抽象的。
-
-
-
-
-
-
 
 
 
@@ -522,6 +520,8 @@ Person无参数构造方法           //---Person构造---
 
 ![image-20201220213029943](DUYI_java_ii_Class.assets/image-20201220213029943.png)
 
+**（图：Person p = new Person(); 的加载过程 - Person的父类Animal）**
+
 ```java
 //--第3步完--
 Animal静态方法
@@ -620,5 +620,141 @@ public interface Test{}
 
 ![image-20201221203750739](DUYI_java_ii_Class.assets/image-20201221203750739.png)
 
-* Student s = (Student) o;  //编译没问题，但是运行时异常 —— ClassCastException类造型异常
+* ---------------------------------**Student s = (Student) o;**  //编译没问题，但是运行时异常 —— ClassCastException类造型异常
+
+### 七、知识回顾及补充
+
+> 知识回顾：适配器和多态
+>
+> 适配器：解决一个接口定义了好多方法的问题
+>
+> 适配器通常是一个抽象类，implements接口，并添加了某些具体方法（方法内抛出异常）
+>
+> 这样它就是一个特殊的接口，接口定义的抽象方法方法子类必须重写。
+
+
+
+
+
+
+
+> Java Core 知识补充：**构造器**
+>
+> **仅当**类中**没有任何构造器的时候**，系统才会**默认给你一个无参数的构造器**。一旦你定义了构造器，就不能使用无参构造来创建对象。
+>
+> 父子类：
+>
+> 1. 父无构造器，子无构造器。那么二者都是默认的无参构造器。
+>
+>    ---> 创建一个子类对象时，先先构建父对象字段部分（先执行父构造器），再构建子对象字段部分（再执行子构造器）。
+>
+> 2. 父有有参数构造器，子有有参数构造器。
+>
+>    ---> 子构造器中，要先在第一行调用父构造器并传入属性：public Student(String name, String major){ **super(name);**  this.major=major; }  之后再初始化自己的属性。
+>
+>    * 这样的效果是：父类有所有子类的共同字段name，并有构建赋值能力（抽象类的构造器，纯粹只给子类构建器 构造对象用），并有获得字段的能力——getName方法（所有子类都需要调用这个只有父类可以用的private name字段。为什么不用protected？因为这样子类可以直接用这个字段了，并且可以改，不安全）
+>    * 效果是：子类只有各自独有的属性，和独有的方法，以及重写的父类的方法。如果是抽象类的子类，那么还有抽象类定义的抽象方法的具体化方法（其实也是一种重写）。
+
+
+
+那么适配器是什么？
+
+---> 是一个抽象类，接口的要求还在那里，它保留这些所有的抽象方法，它implements接口，并让那些实现了接口的子类继承它。自己内部出了接口的全部抽象方法外，还可以新的具体方法{方法内只抛出异常}。子类根据需求增加新功能，需要新功能的，就重写那些方法，不需要的就别写。
+
+
+
+> Java Core 知识补充：**接口**
+>
+> 接口是抽象类的极致。只有抽象方法，没有实际方法。可以被多实现。
+>
+> 接口不是类，它是对希望符合这一接口的类的一组需求。Arrays类的sory()方法承诺可以对对象数组进行排休，但前提是该对象的类要实现了Comparable接口。（接口里定义的需求：int compareTo (Object o); ）
+>
+> 接口的方法都是自动public。接口的属性都是自动public static final，即都是常量（有final必须直接赋值）。
+>
+> 接口没有实例。1.8版本之后，接口可以提供一些简单的具体方法，但是不能引用实例字段，只能引用属性字段。
+>
+> 接口不是类，所以没有实例。但是可以有接口变量：Compareble x; 接口变量必须引用一个实现了该接口的类的对象。**(多态)!**
+>
+> 可以包含多个抽象方法（需求）。
+>
+> 一个类要实现一个接口：
+>
+> 1. implements    2. 实现接口定义的方法
+>
+> instanceof  检查一个对象是否属于一个类，也可以检查一个对象的类是否实现了接口：
+>
+> 1. 对象 instanceof 类      2. 对象 instanceof 接口
+>
+> 接口也可以有继承：从通用性较高的接口，到专用性较高的接口
+>
+> 接口可以多实现：class Employee implements Cloneable, Comparable{...}  这意味着，你可以使用.clone()和.sort()方法了。
+>
+> 一个类可以继承一个类，多实现n个接口：
+>
+> ```java
+> class Employee extends Person implements Cloneable, Comparable{
+>   ...
+> }
+> ```
+>
+> 接口和抽象类：为什么要引入接口概念？ **类 implements 接口**  vs **类 extends 抽象类**
+>
+> * 因为extends只能继承一个类，而implements可以实现多接口
+> * 接口提供了多继承的大多数好处，避免了多继承的复杂性和低效率
+
+
+
+> Java Core 知识补充：**抽象类**
+>
+> 原因：越上层的类约抽象，它对对象的信息提供就非常少。
+>
+> 目的：为了提高程序的清晰度，知道这个抽象类到底为一个对象提供哪些信息，我们使用抽象概念。即让一个类本身是abstract，里面除了包含自身的属性，就是本身不打算提供具体方法的(一个或多个)抽象方法。
+>
+> eg：一个Person类，被Employee类和Student类继承。它提供一些具体方法，也提供抽象方法。
+>
+> ```java
+> abstract class Person{//不写: 本类 同包可访问 ---> 包外的类，想import这个包来使用这个类，是不可以的
+>    private String name;
+>    Person(String name){ this.name = name; } //构造方法 --> 构造方法一般要public 因为要所有类都可以用 前提是类是共有
+>    String getName(){  return this.name;  }  //具体方法
+>    public abstract String getDescription(); //
+> }
+> class Student extends Person{
+> }
+> class Empolyee extends Person(...)
+> ```
+>
+> **建议尽量把通用字段和方法放在超类中（不论是不是抽象类，不论是不是抽象方法）** ---> 在子构造器中调用父构造器完成那些字段的初始化。再初始化自己的字段。
+>
+> 抽象方法充当占位角色，具体由子类实现。
+>
+> 抽象类不能实例化。可以有抽象类的变量，但只能引用具体化了的子类的对象。Person p = new Student();  **(多态)!**
+>
+> 不含抽象方法，也可以声明为抽象类。抽象类不能实例化。
+>
+> 问题：为什么不直接只在Student和Employee类中写getDescription()方法，还要在Person里放一个抽象方法？
+>
+> * 因为，这样p变量就可以调用getDescription()方法，并且根据不同的实际对象给出不同的返回结果。**(多态)!**
+> * 如果Person里不写这个抽象方法，p就不能调用getDescription()方法。
+
+
+
+> Java Core 知识补充：**static和final**
+>
+> **static 静态** —— 属于该类的，存在方法区的静态区的该类空间中。
+>
+> 1. private static int nextId;   **静态字段**：每个类只能有一个静态字段，属于这个类，而不属于任何一个对象。（可以不断改值）
+>
+> 2. public static final PI = 3.14;  **静态常量**：public静态常量是可以的，因为它final了，不会被改。
+> 3. Math.pow(x,a);  **静态方法**：不在对象上执行。
+>    * 什么时候使用静态方法：1. 方法不需要访问对象状态。  2. 方法只访问类的静态字段。
+>
+> **final 最终的** —— 不被更改：In Java, the **`final` keyword** can be used while declaring an entity(实体). Using the final keyword means that **the value can’t be modified in the future**.
+>
+> 1. 静态常量：public static final PI = 3.14; 类就一个static字段，而且final不能改，所以叫静态常量。类的属性凡是final必须赋值。
+> 2. final属性：class FinalTest{ final int x = 1;}  类的属性凡是final必须赋值。（权限符默认不写，就是本包和本类）
+> 3. final变量：方法中，final int a; 一旦赋值，不能再改。
+> 4. final形参：这个形参在方法中不能被改变。public static  void test(final int a){ a = 3; } //这就报Error了。（static可以不写）
+> 5. final方法：此方法 不能被overriden重写。
+> 6. final类：此类不 能被extends继承。
 
