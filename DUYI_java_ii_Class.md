@@ -229,11 +229,11 @@ java程序体现：**一个类的方法中使用到另一个类的对象。**形
 
 #### 1. final
 
-* **final 类**：不能被子类继承 —— 通常是定义好的工具类，比如：Math类、Scanner类、Integer类、String类
+* **final 类**：不能被子类继承 —— 通常是定义好的工具类，比如：Math类、Scanner类、Integer类、String类。
 
-* **final 方法**：不能被子类重写
+* **final 方法**：不能被子类重写。
 
-* **final 属性**：即便没赋值，也有默认值，所以必须赋初值（否则报错）
+* **final 属性**：属性即便没赋值，也有默认值，所以 ①要么声明时赋初值 ②要么声明时不赋值，在代码块或构造函数中赋值。
 
 * **final 变量**：变量声明后，只有一次赋值机会，一旦赋值不能再改变 —— 相当于常量。
 
@@ -713,9 +713,9 @@ public interface Test{}
 >
 > 1. implements    2. 实现接口定义的方法
 >
-> instanceof  检查一个对象是否属于一个类，也可以检查一个对象的类是否实现了接口：
+> **instanceof  检查一个对象是否属于一个类，也可以检查一个对象的类是否实现了接口：**
 >
-> 1. 对象 instanceof 类      2. 对象 instanceof 接口
+> 1. **对象 instanceof 类      2. 对象 instanceof 接口**
 >
 > 接口也可以有继承：从通用性较高的接口，到专用性较高的接口
 >
@@ -754,7 +754,7 @@ public interface Test{}
 >    public abstract String getDescription(); //抽象方法
 > }
 > class Student extends Person{
->   ①属性major; ②构造器Student{super(name);...} ③具体化方法getDescription(){...} ④方法study(){...} 
+>     ①属性major; ②构造器Student{super(name);...} ③具体化方法getDescription(){...} ④方法study(){...} 
 > }
 > class Empolyee extends Person(
 > 	①属性salary; ②构造器Employee{super(name);...} ③具体化方法getDescription(){...} ④方法riseSalary(){...} 
@@ -782,7 +782,7 @@ public interface Test{}
 >
 > **static 静态** —— 属于该类的，存在方法区的静态区的该类空间中。
 >
-> 1. private static int nextId;   **静态字段**：每个类只能有一个静态字段，属于这个类，而不属于任何一个对象。（可以不断改值）
+> 1. private static int nextId;   **静态字段**：属于类，而不属于任何一个对象。可以通过类名调，也可通过对象调。（可以不断改值）
 >
 > 2. public static final PI = 3.14;  **静态常量**：public静态常量是可以的，因为它final了，不会被改。
 > 3. Math.pow(x,a);  **静态方法**：不在对象上执行。
@@ -790,8 +790,10 @@ public interface Test{}
 >
 > **final 最终的** —— 不被更改：In Java, the **`final` keyword** can be used while declaring an entity(实体). Using the final keyword means that **the value can’t be modified in the future**.
 >
-> 1. 静态常量：public static final PI = 3.14; 类就一个static字段，而且final不能改，所以叫静态常量。类的属性凡是final必须赋值。
-> 2. final属性：class FinalTest{ final int x = 1;}  类的属性凡是final必须赋值。（权限符默认不写，就是本包和本类）
+> 1. 静态常量：public static final PI = 3.14; 类就一个static字段，而且final不能改，所以叫静态常量。final static必须声明时赋值。
+> 2. final属性：class FinalTest{ final int x = 1;}  
+>    * 权限符默认不写，就是本包和本类。本类里直接用；本包要通过本类的对象用，可以访问，可以改。
+>    * final属性：要么声明时赋值。要么在构造函数和代码块赋值。final static属性必须声明时赋值。
 > 3. final变量：方法中，final int a; 一旦赋值，不能再改。
 > 4. final形参：这个形参在方法中不能被改变。public static  void test(final int a){ a = 3; } //这就报Error了。（static可以不写）
 > 5. final方法：此方法 不能被overriden重写。
@@ -895,6 +897,8 @@ class Bank{
 
 ### 九、内部类
 
+目的：为了封装。
+
 java中，一个类定义在另一个类内部。
 
 内部类可以定义在，类的内部（和类成员同一个层次）。
@@ -966,3 +970,60 @@ java中，一个类定义在另一个类内部。
    * 静态元素不能访问非静态元素（自己类和外部类的都不行）
    * private protected public 不写：都可以
 
+### 十、枚举类
+
+> java数据类型：
+>
+> 基本类型：8个
+>
+> 引用类型：数组[ ]  String  类class  抽象类abstract class   接口interface   枚举enum  注解@interface
+
+没有他也行，只是有些时候，因为它的存在会更方便。
+
+**枚举类：一个类的对象是有限且固定的。**
+
+没有枚举类之前，我们怎么达到这样的效果？
+
+1. 私有化构造器，这样别人就不可以构造更多本类对象。
+2. 把对象建立在属性里：
+
+```java
+class Day{
+   //首先私有化构造器
+   private Day(){}
+   //其次，类似于单例模式，把对象构建在属性里。
+   //①这个属性对象要可以被调用，所以要public
+   //②不能通过构造新的类对象来访问这个属性，只能通过类名来访问这个属性，所以要static
+   //③它不可以被随便改值，所以要final
+   public static final Day Monday = new Day();
+   public static final Day Tuesday = new Day();
+   public static final Day Wednesday = new Day();
+   public static final Day Thursday = new Day();
+   public static final Day Friday = new Day();
+   public static final Day Saturday = new Day();
+   public static final Day Sunday = new Day();
+   //一般属性随便设计即可
+}
+//使用这些对象：
+   Day day = Day.Monday;
+```
+
+枚举类：
+
+```java
+public enum Day{Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday}
+//使用：
+   Day day = Day.Monday;
+```
+
+接口没有父类。
+
+> 所以接口是干嘛用的？
+>
+> ① Java core的说法是，你要想使用一些方法，必须实现某个接口。比如你想用.sort()方法，必须实现CompareTo接口。
+>
+> ② 接口定义了一系列规则(需求)，实现类必须实现里面的接口。于是可以用接口对象 实现多态。
+
+但是枚举类是一个正常的类，它默认继承了Object类，还默认继承了Enum类 —— 所以枚举类不能再继承其他类。
+
+Enum类：抽象类
