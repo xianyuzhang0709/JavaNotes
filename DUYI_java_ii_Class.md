@@ -976,7 +976,7 @@ java中，一个类定义在另一个类内部。
 >
 > 基本类型：8个
 >
-> 引用类型：数组[ ]  String  类class  抽象类abstract class   接口interface   枚举enum  注解@interface
+> 引用类型：数组[ ]  String  类class  抽象类abstract class   接口interface   **枚举enum**  注解@interface
 
 没有他也行，只是有些时候，因为它的存在会更方便。
 
@@ -995,35 +995,85 @@ class Day{
    //①这个属性对象要可以被调用，所以要public
    //②不能通过构造新的类对象来访问这个属性，只能通过类名来访问这个属性，所以要static
    //③它不可以被随便改值，所以要final
-   public static final Day Monday = new Day();
-   public static final Day Tuesday = new Day();
-   public static final Day Wednesday = new Day();
-   public static final Day Thursday = new Day();
-   public static final Day Friday = new Day();
-   public static final Day Saturday = new Day();
-   public static final Day Sunday = new Day();
+   public static final Day monday = new Day();
+   public static final Day tuesday = new Day();
+   public static final Day wednesday = new Day();
+   public static final Day thursday = new Day();
+   public static final Day friday = new Day();
+   public static final Day saturday = new Day();
+   public static final Day sunday = new Day();
    //一般属性随便设计即可
 }
 //使用这些对象：
    Day day = Day.Monday;
 ```
 
-枚举类：
+1.5版本后，可以直接定义枚举类：
 
 ```java
-public enum Day{Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday}
+public enum Day{monday,tuesday,wednesday,thursday,friday,saturday,sunday}
 //使用：
    Day day = Day.Monday;
 ```
 
-接口没有父类。
+* 枚举类是一个正常的类，它默认继承了Object类，还默认继承了Enum类(java.lang包) 
 
-> 所以接口是干嘛用的？
->
-> ① Java core的说法是，你要想使用一些方法，必须实现某个接口。比如你想用.sort()方法，必须实现CompareTo接口。
->
-> ② 接口定义了一系列规则(需求)，实现类必须实现里面的接口。于是可以用接口对象 实现多态。
+* 所以枚举类不能再extends其他类，但是可以implement接口。
 
-但是枚举类是一个正常的类，它默认继承了Object类，还默认继承了Enum类 —— 所以枚举类不能再继承其他类。
+**Enum类：** 是抽象类，但没有抽象方法——即，它只是不能构造实例而已。
 
-Enum类：抽象类
+* 两个属性：
+  1. name：枚举对象的名字。方法name()返回name属性。
+  2. ordinal：枚举对象在类中罗列的顺序。相当于index，从0开始。方法ordinal()返回ordinal属性。
+* 一些方法：
+  1. valueOf(String name)：通过给定字符串name，找到对应名字的枚举对象。
+  2. values()：获取全部枚举对象，返回数组Day[ ]。
+  3. compareTo()：可以比较两个枚举对象、返回类型为int：-1表示this靠前，0表示相等，1表示this靠后。
+  4. 一些final方法，从Object继承过来：hashCode()  equals()等。
+  5. toString()：也继承自Object，但是可以重写。
+
+**枚举类**的使用：枚举类不能abstract
+
+1. switch语句里，括号内可以用enum类对象。
+
+2. 一般枚举类就是用来设置有限对象或常量然后来用。
+
+3. 我们当然也可以在enum类中描述自己的属性和方法：
+
+   i. 必须在enum类的第一行描述一下枚举类对象的样子
+
+   ii. 可以定义自己的属性。因为在类创建的过程中，虚拟机会帮我们创建枚举类的对象。所以我们需要提供构造方法。
+
+   iii. 枚举类不能有public构造函数（因为枚举类不能共有创造对象）。必须private。
+
+   xi. 构造方法需要跟你定义的枚举对象的样子相匹配。
+
+   v. 方法可以重载。当然构造方法也可以。
+
+Enum类和枚举类可以**多态**：`Enum e = Day.monday;`
+
+```java
+public enum Day{
+   monday("礼拜一",1),tuesday,wednesday;  //monday用的有参构造器，tuesday用的无参构造器
+  
+   String name; //四种权限符都可以用
+   int index;
+   private Day(){}
+   private Day(String chinese, index){
+      this.chinese = chinese;
+      this.index = index;
+   }
+   public String toString(){ return chinese; }  //自己定义的方法
+   public int getIndex(){ return index; }
+}
+//那么 monday有4个属性 name: monday  ordinal:0   chinese:"礼拜一"   index:1
+//name和ordinal不能改。继承自父类Enum。只能读取：当你写好对象的时候，这两个值已经确定了。
+//你只能增加自己的属性。
+```
+
+* call to super is not allowed in enum constructor.  构造器中不能调用父构造器
+  * 为什么？
+  * Enum的构造器是protected，**构造函数加protected有什么用？**
+    * 答：protected外部不能随便构建对象，但是子类可以用。(本包和子类可以用来构造对象，但外部不可以)
+    * Enum的构造器似乎更特殊：*Sole constructor. Programmers cannot invoke this constructor. It is for use by code emitted by the compiler in response to enum type declarations.* **独家构造函数。 程序员不能调用此构造函数。 它由编译器根据枚举类型声明发出的代码使用。**
+
