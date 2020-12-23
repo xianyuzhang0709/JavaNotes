@@ -1,3 +1,5 @@
+
+
 权限修饰符：public        protected     默认不写    private
 
 特征修饰符：abstract         final           static           nativ等等
@@ -32,11 +34,30 @@
 
 属性：只能声明 或 声明时赋值。不能写赋值语句。
 
-1. 普通属性：public/private/默认/protected Computer[] computers;    这个属性是一个数组。
+1. 普通属性：public/private/默认/protected Computer[ ] computers;    这个属性是一个数组。
+
 2. 静态属性：private static int nextId;  属于类的 ，不属于任何一个对象，可改变，private只能类内部访问。
-3. 静态常量：public static final String name = "Static Name";   属于类。凡**final属性**必声明时赋值。final属性不能被改。静态常量建议public。
+
+3. 静态常量：public static final String name = "Static Name";   属于类。final属性不能被改。静态常量建议public。
+
+   * final属性：
+
+     ```java
+     class Demo{
+        final int i = 1; //①final属性: 声明时赋值。
+        final int x;
+        public Demo(int i){  //②final属性: 声明时不赋值，但通过初始化块 或 构造函数传参来初始化赋值。
+           this.i = i;
+        }
+        final static int n = 3;//③final static属性: 必须声明时赋值。【这就是常量】
+     }
+     ```
+
+     因为属性在类加载时(静态属性)和对象创建时(普通属性)会被赋予默认值。必须在赋予默认值之前(通过代码块或构造函数)来给final属性赋值，否则这个属性就没有意义。
+
 4. 抽象类的属性：同上。
-5. 接口的属性：String name; 默认都是public static final共有静态常量。
+
+5. 接口的属性：String name; 默认都是public static final公有静态常量。
 
 方法：
 
@@ -56,3 +77,33 @@
 
 1. 普通块。默认在执行构造函数前执行。
 2. static块。静态块，类加载时就执行。所以是先执行静态块（静态块可访问静态属性），再执行普通块。
+
+变量：
+
+1. final变量：final int a。在方法内部不能被改变。
+
+
+
+
+
+##### 二、java基础夯实
+
+* if ( 逻辑 - boolean ){ ... }
+
+* switch( 值 - int/char/enum/String){ ... }
+  * 记得break - 想起break，记得带标签的break —— 在循环语句前：cat: for(...){ ...  break cat; }
+  * 有事也可以利用下漏，所种结果，执行同一种操作，或逐步增加操作 —— 就不要加break。
+
+
+
+
+
+
+
+##### 三、java核心概念
+
+1. 多态：父类、抽象类、接口的对象，可以引用更加子类对象。（一个抽象的类的变量，可以引用具体的子类的对象）
+   * Person p = new Student();
+   * 其中抽象类和接口，都不能有对象。父类可以有。
+
+2. 面向对象的三大特性：继承、封装、多态
