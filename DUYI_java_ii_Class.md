@@ -980,7 +980,7 @@ java中，一个类定义在另一个类内部。
 
 没有他也行，只是有些时候，因为它的存在会更方便。
 
-**枚举类：一个类的对象是有限且固定的。**
+**枚举类：一个类的对象是有限且固定的。可以将类中的对象意义列举**
 
 没有枚举类之前，我们怎么达到这样的效果？
 
@@ -1076,4 +1076,403 @@ public enum Day{
   * Enum的构造器是protected，**构造函数加protected有什么用？**
     * 答：protected外部不能随便构建对象，但是子类可以用。(本包和子类可以用来构造对象，但外部不可以)
     * Enum的构造器似乎更特殊：*Sole constructor. Programmers cannot invoke this constructor. It is for use by code emitted by the compiler in response to enum type declarations.* **独家构造函数。 程序员不能调用此构造函数。 它由编译器根据枚举类型声明发出的代码使用。**
+
+![image-20201225132034168](DUYI_java_ii_Class.assets/image-20201225132034168.png)
+
+
+
+# 内存机制问题
+
+栈内存<---Person p = new Person();--->堆内存    方法区--->类模板
+
+* 栈内存：用完即回收。
+* 堆内存：存new时创建的对象。GC回收。
+
+* 方法区：存类模板、静态。只有一份，回收不了。
+
+GC其实是一个线程。回收算法。
+
+```java
+Person p = new Person();
+p = null;  //刚刚创建的Person对象变为垃圾
+system.gc();//提醒系统去清理垃圾。（在这个位置）
+p.finalize();
+
+为了能看到被回收的效果，回收的是p对象，在Person类里重写finalize方法：
+public void finalize(){System.out.println("完成清理。")} //重写finalize方法，线程部分依然在，你写的部分会在结束后执行。
+
+你也可以利用Runtime对象看到内存情况：单例模式，Runtime.getRuntime()获取对象
+.mexMemory   .totalMemory  .freeMemory  (long类型返回值 单位为字节数)（除以1024得kb）
+```
+
+system.gc() 你可以提醒系统去清理
+
+![image-20201225120405958](DUYI_java_ii_Class.assets/image-20201225120405958.png)
+
+Runtime类中提供的几个内存管理方法：
+
+（Runtime是单例模式设计的类，私有构造器，属性为私有的唯一对象，可以通过getMemory()方法来获得此对象。（懒汉式——用时才创建）
+
+1. .maxMemary() - long类型返回值，单位为字节。
+2. .totalMemory()
+3. .freeMemory()
+
+Max是指虚拟机开辟的栈内存的最大空间。total是指当下系统所用的站内存空间（有的被用了，有的还没有被用）。free是指total里还没有被使用的空间。
+
+如果堆内存溢出。就是需要的内存空间，超出了max的值，会产生：OutofMemoryError: Java heap space，堆内存溢出错误。
+
+Object类中有一个finalize方法，如果重写也可以看到对象回收。
+
+GC垃圾回收器 —— 如果一个堆内存的对象/数组跟栈内存的变量失去联系，就会被认为是垃圾，然后被回收。
+
+# Java类
+
+专业文档：API——java8（大部分文档写的差距不大）—— 建议看英文原版，经常查。
+
+Application Programming Interface: 应用程序变成接口。一些预先创建好的类和方法，目的是帮助我们更好地程序开发。
+
+* **包装类**（封装类）
+* 数学相关
+* 日期相关
+* **字符串**相关❗️
+* **集合**相关❗️（ArrayList LinkedList）
+* **异常**相关❗️
+* **输入输出** I/O（架构师❗️）
+* **线程**相关（架构师❗️）
+* 网络通信：互联网开发协议。（架构师❗️）
+* **反射与注解**：底层且重要。（架构师❗️）架构师：通过反射去封装你们公司的框架。
+* GUI：Swing，AWT。
+
+### 一、包装类（封装类）
+
+**1.5版本后有了自动拆装箱功能，这部分东西虽然多但也没那么重要了，基本涉及的都是基本类型与String之间的转换问题。**
+
+java是完全的面向对象。java中一切都可以看做是对象，连数组都可以看做是对象。只有八个基本类型是特殊的。
+
+1. byte  ---> Byte        short ---> Short         **int ---> Integer**        long ---> Long
+2. float ---> Float        double ---> Double     **char ---> Character**    boolean ---> Boolean
+
+> 学习思路：
+>
+> 1. 类所在的包
+> 2. 类的关系：自己的继承、实现
+> 3. 类中提供的方法
+> 4. 是否可以创建对象，如何调用，方法本身是否静态等
+
+这8个包：
+
+1. 都在java.lang包
+2. 其中6个类与数字相关，默认继承Number类。
+3. 都实现了Serializable和Comparable接口。
+4. 构造方法：都有以自己对应类型为参数的构造方法。
+   * 其中7个还有构造方法重载（以String类型为参数的构造方法），除了char类型。（char就一个字符，String有很多字符）
+5. 创建对象和对象调用方法：
+   * 6个与数字相关的类继承了Number。Number给我们提供了对应类型的6个方法：xxxValue() ---> 将一个包装类型转化为对应的基本类型（拆箱）。比如：intValue()  floatValue()  。
+   * 每个包装类都有一个自己对应类型的构造方法。（拆箱）比如：Integer(10)    Float(3.4)
+   * 除了Character，都有含String类型的构造方法。比如：String("10")   Float("3.4")
+   * 翻看API寻找常用方法：Integer.parseInt("123")等，转换进制等。
+     * eg：Integer i = new Ingeger(10); //装箱
+     * int value = i.intValue();  //拆箱
+     * **jdk1.5版本后**：Integer i = 10; (**自动装箱**)    int v = new Integer(10); (**自动拆箱**) 
+       * int v2 = Integer**.parseInt**("123");(**自动拆箱**)
+       * 这些，这6个数据类型都有。比如：Float.parseFloat("123.34");
+
+7. 所以这部分主要是笔试题多。
+
+#### 1. Integer类 - java.lang
+
+1. 进制转化相关方法：
+
+   * .toBinaryString(int i)
+   * .toHexString(int i)
+   * .toOctalString(int i) 
+
+   ---> 返回String，转化为对应进制的字符串。static方法——可以直接通过类名调用。
+
+2. 笔试题：
+
+   ![image-20201225161713216](DUYI_java_ii_Class.assets/image-20201225161713216.png)
+
+   * 只要new就产生了一个新空间。
+   * Integer类重写了equals方法。return value==((Integer)obj).intValue(); 即把对象转化成Integer对象，再转为int值，比较this.value和obj的**int值**。
+     * 所以本题后3题答案：都是true。
+   * 在Integer类里有一个private static class的**catch静态内部类**。这个类是一个Integer[ ]数组，长度为256，里面的值被赋予从-128~127的Integer对象。这个静态内部类加载在Integer类的静态区。
+     * 当我们创建了一个对象 Integer i1 = 10; 系统会去catch里找对应的对象。如果找到了，就把地址存给变量i1。
+     * 所以i1和i2所指向的地址是一样的。
+     * 而当我们创建一个对象 Integer i = 1000; 系统在catch里找不到对象，就会自动帮我们new一个对象，即Integer i = new Integer(1000); 。
+     * 所以i1和i2，相当于各自都new了一个值为1000的Integer对象。地址是不一样的。
+
+   * ![image-20201225163755222](DUYI_java_ii_Class.assets/image-20201225163755222.png)
+   * 所以综上，答案是：true  false false  true true true
+   * 如果把值改为1000，答案是：false false false  true true true
+
+### 二、与数学相关的类
+
+#### 1. Math类 - java.lang
+
+构造方法是私有的。
+
+所有属性和方法都是static的，不需要创建对象。
+
+常用方法：
+
+1. abs(a)  绝对值 - long（参数int long float double，返回对应类型）
+2. ceil(a)  向上取整 - double
+3. floor(a)  向下取整 - double
+4. rint(a)  最近整数，如果距离一样，取偶数 - double
+5. round(a)  四舍五入 - long
+6. max(a,b)（参数int long float double，返回对应类型）
+7. min(a,b)（参数int long float double，返回对应类型）
+8. pow(a,b)  （参数double  返回double）
+9. sqrt(a)   （参数double  返回double）
+
+10. random()  随机数 [0.0 -- 1.0)
+    * 0-9之间的整数：int v = (int)(Math.random()*10);
+    * 5-10.9之间的小数：int c = (Math.random()*6+5);  ---> Math.random()计算小数的时候精确程度可能会缺失
+
+#### 2. Random类 - java.util
+
+没有继承类，默认Object类。
+
+构造方法--->创建对象：
+
+1. Random()
+2. Random(long seed)
+
+类中提供的常用方法：
+
+```java
+Random r = new Random();//create instance
+int v1 = r.nextInt();//默认int范围，就是int的取值范围：-21亿~21亿
+int v2 = r.nextInt(10);//[0-10) 左闭右开
+```
+
+* r.nextInt()  随机产生int取值范围的整数，有正有负
+* r.nextInt(int bound)  随机产生一个[0 - bound) 的整数
+  * bound必须是positive。如果你想要负数，bound=范围，然后减去距离。
+  * 5-10.9之间的小数：float x = r.nextInt(6)+5 + r.nextFloat()  ---> 整数+小数，精度损失小
+* r.nextFloat()  随机产生[0.0 - 1.0) 小数
+
+#### 3. UUID类 - java.util
+
+没有继承，默认Object
+
+构造方法：有，但是是有参的。所以通常不用来创建对象。而是用一个静态方法。
+
+方法：
+
+* UUID uuid = UUID**.randomUUID()**; 返回一个uuid对象，产生一个32位的16进制数（静态方法）---> 用于生成数据库表格主键
+  * System.out.println(uuid);  默认的toString()方法是打成hashCode。
+  * System.out.println(uuid.toString());  用UUID类重写的toString()方法，输出uuid的内容。
+
+#### 4. BigInteger类 - java.math
+
+大整数。
+
+java都是用基本类型存值，最大的基本类型就是long。long的范围是( -2^63 ~ 2^63-1 )。
+
+用来存储比这个范围更大的数。使用的技术是动态数组。
+
+所属包：java.math
+
+继承自：Number
+
+构造方法：全部带参。通常用带String参数的方法创建对象。
+
+* BigInteger bi = new BigInteger("123");
+
+方法：
+
+* .add(bi)
+
+* .subtract(bi)
+* .mutiply(bi)
+* .divide(bi)
+
+#### 5. BigDecimal类 - java.math
+
+超出double范围的小数。
+
+继承自：Number
+
+构造方法：全部带参。通常用带String参数、int参数、double参数的方法创建对象。
+
+* BigDecimal b = new BigDecimal("123.353");
+
+方法：
+
+* 四则运算 同上
+* .setScale(int i, BigDecimal.ROUND_DOWN)  小数点后保留i位，向下保留
+
+#### 6. DecimalFormat类 - java.text
+
+处理小数点之前和之后的位数。
+
+构造方法：DecimalFormat df = new DecimalFormat("000.0###")   参数为String，代表一种格式
+
+* `###`表示可有可无，`000`表示必须有
+* 四舍五入
+
+### 三、日期相关
+
+#### 1. Date类 - java.util
+
+通常所用的是java.util包
+
+构造函数：
+
+* Date date = new Date();  //默认用当前系统的时间构建对象
+
+* Date date = new Date(1545364985172L);  //用一个时间构建时间对象（参数为long类型）
+
+方法：
+
+* boolean x = date1**.before**(date2);  //date1是否在date2之前，返回boolean值
+* boolean y = date1**.after**(date2);
+
+* date1**.setTime**(1545364985172L);  //给Date对象设置时间（毫秒值）
+* date1.getTime();  //返回long类型（毫秒值）
+* int a = date1.compareTo(date2); //按字典索引顺序比较：-1表示date1在前。1表示date1在后。0表示相等。
+
+* date1.toString()  重写了toString方法，格林威治格式Fri Dec 21 12:12:12 CST 2018
+
+#### 2. DateFormat类 - java.util
+
+抽象类。
+
+子类：SimpleDateFormat
+
+```java
+DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+String v = df.format(date1);
+System.out.println(v);
+```
+
+* 每个字母有对应的含义。
+
+#### 3. Calendar类 - java.util  1.1版本
+
+构造方法：有，protected修饰，访问不到，通常调用默认的.getInstance()获得对象。
+
+```java
+Calendar c = Calendar.getInstance(); //系统当前时间的Calendar对象
+System.out.println(calendar);//toString方法被重写：java.util.GregorianCalendar[name=value,name=valuue,...]-->JSON格式
+```
+
+属性：YEAR   MONTH   DAY_OF_MONTH
+
+方法：
+
+* .after()  .before()   返回int
+* .setTime(date1)  .getTime()   返回date
+  * Calendar里包含属性是Date类型，Date里包含属性是Time类型。
+
+* c.set(c.YEAR, 2015)
+* c.get(c.MONTH)
+
+#### 4. TimeZone类 - java.util
+
+构造函数：
+
+```java
+TimeZone tz = calendar.getTimeZone();
+TimeZone tz = TimeZone.getDefault();
+```
+
+方法：
+
+* .getID()  时区ID
+
+* .getDisplayName()  时区名
+
+### 四、字符串相关
+
+#### 0. Scanner类 - java.util
+
+构造方法：输入流为参数（InputeStream）
+
+方法：nextInt()  nextFloat()  next()  ---> 回车符为结尾，不读回车符。 nextLine() ---> 读回车符。
+
+#### 0. System类 - java.lang
+
+全部是静态属性和静态方法，没有构造方法。
+
+三个属性：out输出流  int输入流   err
+
+* System.out.print()
+
+方法：
+
+* gc()    
+* exit(int status)     一般传0，表示系统中断
+* currentTimeMillis()   当前系统时间与计算机元年之间的毫秒差——long
+  * 1970-1-1 00:80:00 （中国快8小时）
+
+#### 1. String类 - java.lang
+
+构造方法：
+
+* String s = "abc";
+* String s = new String("123");
+
+* String是一个特殊的引用数据类型，可以像基本类型一样，创建，赋值。
+
+String的特性:
+
+* String的equals方法：比地址，逐个比char，符合就true。
+
+```java
+public boolean equals(Object anObject){
+    if(this==anObject){
+      return true;
+    }
+    if(anObject instanceof String){
+      String anotherString = (String)anObject;
+      int n = value.length;
+      if(n==anotherString.value.length){
+        char v1[] = value;
+        char v2[] = anotherString.value;
+        int i = 0;
+        while(n-- != 0){
+          if(v1[i] != v2[i])
+            return false;
+          i++;
+        }
+        return true;
+      }
+    }
+    return false;
+}
+```
+
+> 笔试题：
+>
+> ```java
+> String s1 = "abc";
+> String s2 = "abc";
+> String s3 = new String("abc");
+> String s4 = new String("abc");
+> System.out.println(s1==s2);  //true
+> System.out.println(s1==s3);  //false
+> System.out.println(s3==s4);  //false
+> System.out.println(s1.equals(s2));  //true
+> System.out.println(s1.equals(s3));  //true
+> System.out.println(s3.equals(s4));  //true
+> ```
+>
+> ![image-20201225213244726](DUYI_java_ii_Class.assets/image-20201225213244726.png)
+
+* 字符
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -58,3 +58,7 @@ Ternary operator 三元操作符 —— `?:`
 
 Assignment operator 赋值运算符 —— `= += -= *= ... &= ^= <<= >>>=`
 
+术语：
+
+invoke：引用(法律)，唤起(情感)，祈求(向神)
+
