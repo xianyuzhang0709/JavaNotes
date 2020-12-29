@@ -23,26 +23,12 @@
 用于不要忘记学习方法中最重要的事情是什么？
 
 * 诚实。完全学会，学通为止，在生活中也能随时想起，以其思想塑造自己的生活。不要自欺欺人，要渴望最深入最准确的理解。
-
 * 前面走不稳，后面跑得很痛苦。
-
 * 夯实基础。几百万遍都不过分。只要还不够清楚，就要不断找机会打磨清楚和深入。【讲，给别人讲明白】
 
-  
-
-Masters failed even more than bigainners tried.
+* Masters failed even more than bigainners tried.
 
 
 
 
-
-javai 2579分钟
-
-javaii 2656分钟
-
-
-
-腾讯课堂：
-
-12.25  243分钟
 

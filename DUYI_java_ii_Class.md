@@ -1317,7 +1317,7 @@ java都是用基本类型存值，最大的基本类型就是long。long的范�
 
 #### 1. Date类 - java.util
 
-通常所用的是java.util包
+通常所用的是java.util包。java.sql包也有。
 
 构造函数：
 
@@ -1331,12 +1331,12 @@ java都是用基本类型存值，最大的基本类型就是long。long的范�
 * boolean y = date1**.after**(date2);
 
 * date1**.setTime**(1545364985172L);  //给Date对象设置时间（毫秒值）
-* date1.getTime();  //返回long类型（毫秒值）
-* int a = date1.compareTo(date2); //按字典索引顺序比较：-1表示date1在前。1表示date1在后。0表示相等。
+* date1.**getTime**();  //返回long类型（毫秒值）
+* int a = date1.**compareTo**(date2); //按字典索引顺序比较：-1表示date1在前。1表示date1在后。0表示相等。
 
-* date1.toString()  重写了toString方法，格林威治格式Fri Dec 21 12:12:12 CST 2018
+* date1.**toString**()  重写了toString方法，格林威治格式Fri Dec 21 12:12:12 CST 2018
 
-#### 2. DateFormat类 - java.util
+#### 2. DateFormat类 - SimpleDateFormat子类 -  java.util
 
 抽象类。
 
@@ -1348,7 +1348,7 @@ String v = df.format(date1);
 System.out.println(v);
 ```
 
-* 每个字母有对应的含义。
+* 每个字母有对应的含义。具体去查表格。
 
 #### 3. Calendar类 - java.util  1.1版本
 
@@ -1403,23 +1403,38 @@ TimeZone tz = TimeZone.getDefault();
 
 方法：
 
-* gc()    
-* exit(int status)     一般传0，表示系统中断
-* currentTimeMillis()   当前系统时间与计算机元年之间的毫秒差——long
-  * 1970-1-1 00:80:00 （中国快8小时）
+* **gc**()    
+* **exit**(int status)     一般传0，表示系统中断
+* long time = **currentTimeMillis()**   当前系统时间与计算机元年之间的毫秒差——long
+  * 1970-1-1 00:00:00 （对中国来说是00:08:00）
 
 #### 1. String类 - java.lang
 
-构造方法：
+没有继承关系，实现了三个接口Serializable,CharSequence,Comparable<>
 
-* String s = "abc";
+构造方法：`常量  无参数  带参数String 带参byte[] 带参char[]`
+
+* String s = "abc";   ---> String是一个特殊的引用数据类型，可以像基本类型一样，创建，赋值。
+  * 这个方法是直接将字符串常量赋值给str，字符串常量池（方法区），是一个对象存在常量区。
 * String s = new String("123");
 
-* String是一个特殊的引用数据类型，可以像基本类型一样，创建，赋值。
+* String s = new String();  //无参数构造，创建一个空串""
+* String s = new String(char[ ] value);  //把数组中每一个char  组成String
+  * //重载  String s = new String( char[] value, int offset, int count);  //offset从第几开始，count数几个。eg：hello, 1, 3 ---> ell
+* String s = new String(byte[ ] value, int offset, int count);  //把数组中每一个byte元素转成char  组成String
+* String s = new String(int[ ] value, int offset, int count); //unicode转化
 
-String的特性:
+String的特性（常见于笔试题）:
 
-* String的equals方法：比地址，逐个比char，符合就true。
+* String的**equals方法**：比地址，逐个比char，符合就true。
+* **String的不可变性**。
+  * String类是一个final类，属性中包含一个private final char[] value; //用于存储一个字符串中的每一个字符。
+  * String的不可变性体现在两个地方：**长度和内容**。
+  * 长度：final修饰，所以value所指的地址不可变。char[] 数组本身长度不可变，所以final 数组地址长度都不可变。
+  * 内容：private修饰，不能在当前类以外访问，类里没有提供public的更改方法，所以数组内容也不可变。
+* String与StringBuffer区别，StringBuffer与StringBuilder区别。
+* String对象的存储。
+* String中常用方法。
 
 ```java
 public boolean equals(Object anObject){
@@ -1462,17 +1477,126 @@ public boolean equals(Object anObject){
 >
 > ![image-20201225213244726](DUYI_java_ii_Class.assets/image-20201225213244726.png)
 
-* 字符
+##### 常用方法：
 
+1. *boolean* a = s**.equals**(Object obj);
 
+   * 默认Object类的方法是==，比地址。
+   * String重写了equals方法，改为比**每一个字符(的值)是否相同**。
+   * **.equalsIgnoreCase**()
 
+2. *int* a = s**.hashCode**();
 
+   * 默认Object类的hashcode方法是，调用了本地的native方法进行计算，然后得到16进制码返回。
 
+   * String类重写了hashCode方法：h = h*31 + nextchar_intvalue; h被初始化为0。最终得到一个int整数。
 
+* 一般equals方法和hascode方法，要重写都一起重写。
 
+3. int a = s**.compareTo**(String s2);
 
+   * .compareToIgnoreCase()  
 
+   * 实现自Comparable接口，实现了这个接口。按字典顺序比。
 
+   * 1. 按照两个字符串中长度较短的那个作为循环次数
 
+     2. 逐个比较元素：**s[i] - s2[i]**。结果为0，继续下一个循环；如果不是0，输出结果。
 
+     3. 如果循环过后全部为0，s.length - s2.length，输出结果。
+
+     4. ```java
+        s = "abc";
+        s2 = "ab"; //s.compareTo(s2) == 1
+        s2 = "abd";//s.compareTo(s2) == -1
+        ```
+
+4. *String* a = s**.toString**();
+
+   * 继承自Object类，类名@hashCode(16进制)
+   * String重写了，return this。返回String的字面值。
+   * String是null: 返回null。空串：(无)。new String(): (无)。
+
+5. *char* a = s.**charAt**(int index); //返回给定index对应位置的那个char。eg: s="abc", 0就返回a。
+
+   *int* a = s.**codePointAt**(int index); //返回给定index对应位置的那个char的code码。eg：s="abc", 0就返回97。
+
+6. s.**length**()  //返回字符串的长度（实际上就是value数组的.length）
+   * 数组是.length属性
+   * 集合是size()方法
+   * String是length()方法
+
+7. String = s**.concat**(String s)  //将给定的字符串拼接在s字符串之后。返回一个新的string，不改变原string。
+   * 笔试题：String s = "a"+"b"+"c"+"d"; //这个过程中产生了几个String对象？
+   * 7个。
+   * +和concat谁的效率更高？
+     * 20w次用+拼接，用时9447ms：创建新的，再赋值给str，再创建新的
+     * 20w次用str.concat("a")，用时5324ms：它虽然也创建新的，但不会在常量池中拼接
+   * 频繁拼接字符串：最好的方法是使用StringBuilder/StringBuffer对象效率更高（里面的属性数组不是final）。
+
+8. boolean = s**.contains**(CharSequence s); //判断给定的s是否在字符串中存在
+
+9. s**.startsWith**(String s1); //判断字符串s是不是以s1开头
+
+   s**.endsWith**(String s2); //判断是否结尾 ----> boolean
+
+10. byte[] = s**.getBytes**();
+
+    char[] = s**.toCharArray**(); //将当前字符串转化成数组。
+
+    * char数组可以存的类型有中文，英文，字符，数字，都可以。所以无需重载。
+    * 如果我们的字符串是"我爱你中国"，char类型就可以存'我' '爱' '你' '中' '国'，但是byte却存不下'我'的Unicode值。所以byte[]方法有重载：byte[] = s.getByte(String charsetName);
+
+11. int index = s**.indexOf**(String a)  //找寻给定元素第一次出现的index值 ---> 可以输入子字符串,eg: String a = "abc";
+
+    int index = s**.indexOf**(String a, int fromIndex);  //从from位置开始找，找给定元素的index值  
+
+    int index = s**.indexOf**(int char_value);  //输入char的int值，来找
+
+    int index = s**.indexOf**(int char_value, int fromindex);  
+
+    找不到则返回-1。
+
+    int index = s**.lastIndexOf**(String b, int fromindex);  //给定的字符，最后一次出现的index。from，从from位置开始往前找最后一次出现的位置。
+
+    int index = s**.lastIndexOf**(int b, int fromindex);   //重载同上：from可以不写
+
+12. boolean = s**.isEmpty**();  //判断字符串是否为空 ---> 方法是：`.length`是否为0
+
+    * ```java
+      str = "";
+      boolean a = str.isEmpty(); //true
+      str2 = null;
+      boolean b = str2.isEmpty();//空指针异常
+      ```
+
+    * 没有对象，却还调用对象方法，就会空指针异常
+
+13. String n = s**.replace**(**String** target, **String** replacement);  //注意String的不可变性，原字符串不变，只是返回新串
+
+    * .replaceAll()  同效果，replace也能都换
+    * .replaceFirst()  只换第一个
+
+14. String[] v = s**.split**(String regex, [int limit]);  //limit限制拆分成几段。拆出以后的东西，拆除所用的标识符号会被删掉。
+
+    s**.matches**(String regex)
+
+15. String s = s**.subString**(int begin, [int end]); //从begin开始，到end结束 [begin, end)。不包括end。不改变原string。
+    * 3，1 不行
+    * -3，1 不行
+
+16. String = s.toLowerCase()  //String返回新串
+
+    String = s.toUpperCase()  //全部字符转为小写/大写。不改变原string。
+
+17. String = s**.trim**();  //去除前后多余的空格
+18. boolean = matches(String regex);  //判断是否符合正则表达式
+
+##### String总结：
+
+![image-20201229215134284](DUYI_java_ii_Class.assets/image-20201229215134284.png)
+
+![image-20201229215222454](DUYI_java_ii_Class.assets/image-20201229215222454.png)
+
+![image-20201229215910931](/Users/zhangxianyu/Java_Notes/DUYI_java_ii_Class.assets/image-20201229215910931.png)
 
