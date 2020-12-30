@@ -1731,5 +1731,171 @@ String StringBuffer StringBuilder可以互相构建。
    }
    ```
 
+![image-20201230173846063](DUYI_java_ii_Class.assets/image-20201230173846063.png)
 
+![image-20201230174140889](DUYI_java_ii_Class.assets/image-20201230174140889.png)
+
+### 五、集合相关
+
+集合是指，具有某种特性的具体或抽象的对象汇总而成的集合。
+
+> 变量 -- 容器：存储一个元素
+>
+> 数组 -- 容器：存储一组元素（类型一致）。数组长度固定。
+>
+> Box -- 容器：存储一组元素（类型一致）。长度可变（用户用起来可变，底层还是不可变的数组）。ArrayBox和LinkedBox。
+>
+> 集合 -- Box。
+
+集合：Collection  Map
+
+|            | Collection接口        | Map接口                                         |
+| ---------- | --------------------- | ----------------------------------------------- |
+| 存储方式： | value对象             | Key-value形式（key无序无重复，value无序可重复） |
+|            | **List** - 有序可重复 |                                                 |
+|            | **Set** - 无序无重复  |                                                 |
+
+序：顺序，指添加进去的元素，取出元素的顺序也一样。
+
+重复：两个对象元素一致。
+
+#### 1. List集合
+
+1. ArrayList
+2. LinkedList
+3. Vector
+
+> ArrayList和Vector的区别：
+>
+> 类似于StringBuilder和StringBuffer的区别。
+>
+> Vector是1.0版本出现。ArrayList是1.2版本。
+
+##### 1.1 ArrayList - java.util
+
+底层就是数组。
+
+创建对象：
+
+* 无参构造函数，默认capacity of 10
+* 带空间的构造函数
+* 带collection参数的构造方法
+
+方法：
+
+小容器Object[]——增删改查CURD（create，update，remove，delete）
+
+* .add(E e)
+
+* .get(int index)
+
+* .remove(int index)
+
+* .size() //有效个数
+
+* .toString()  //重写了toString方法：[a,b,c,d,e]
+
+* 集合元素全部删除：
+
+  ```java
+  ArrayList<String> list = new ArrayList<String>();
+  list.add("a");  //陆续加入b,c,d,e不写了。。。
+  for(int i=0; i<list.size();i++){
+  		list.remove(i);
+  }
+  //list此时==[b,d] ---> 这种方法删不干净
+  改为：list.remove(0); //也删不干净[d,e]。
+  因为size会逐步减少，i会增加，size==i时，就不能继续删除了。
+  
+  //所以
+  int size = list.size();
+  for(int i=0; i<size;i++){
+    	list.remove(i);
+  }
+  ```
+
+* add(E e)   add(int index, E e)
+
+* addAll(Collection**<? extends E>** c)
+
+  ```java
+  ArrayList<Integer> list1 = new ArrayList<Integer>();
+  ArrayList<Integer> list2 = new ArrayList<Integer>();
+  //addAll(Collection<? extends E> c)中<? extends E>是什么意思呢？
+  list1.addAll(list2);
+  //addAll()方法内要传入的是一个collection，其次要判断这个传入的集合的泛型（内部类型）是不是与this的泛型一致。
+  list1存在泛型<Integer>, list2也存在泛型。
+  //list2的泛型必须是跟list1的泛型一样，或是其子类。
+  ```
+
+* clear()  //清楚所有元素
+* contains(Object o) ---> boolean
+* ensureCapacity()
+* get(int index)  ---> E
+* indexOf()   lastIndexOf()
+* Iterator = list**.iterator**()  //迭代器
+* remove(int index)   remove(Object obj)
+  * list.remove(1)  //1即可以是index，也可以是一个Integer对象，冲突情况下，按1是index处理
+  * 如果你要删除”1“这个对象，必须这样用：list.remove(new Ingeter(1));
+* removeAll()  //删除this集合中与list2集合相同的所有元素
+
+* retainAll()  //this集合和list2集合的相同元素
+* 集合交集、集合并集、集合差集：
+  * addAll  并集
+  * removeAll 差集
+  * retianAll 交集
+* set(int index, E value) //用value对象代替index位置的原对象，返回被删除的对象--->用于帮你确认删除操作正确
+
+* subList(int start, int end) ---> 返回的是父类List，左闭右开
+
+* toArray()  ---> Object[] 把集合变为数组。但是你需要造型，很不方便。
+
+* toArray(T[])  //有参的toArray方法：toArray(T[])。
+
+  * 实现准备好一个空数组，用于接收返回值：Integer[] x = new Integer[list1.size()]
+
+    list1.toArray(x);  //x被填满
+
+* trimToSize()  //变成有效元素个数那么长
+
+ArrayList什么类型都能存，取出的时候是多态效果，需要自己造型，用起来很麻烦。
+
+JDK1.5之后增加了**泛型**。
+
+##### 泛型：
+
+**java中的`<E>`表示泛型，指任意类型。**比如HashMap<K,V>，你可以把K,V设置成任意类。
+
+用来规定数据类型的，定义的时候用一个符号代替某种类型。在使用的时候用具体的数据类型，将定义的符号去掉。
+
+泛型可以用在哪里？
+
+1. 泛型类：类定义的时候描述某种数据类型，集合的使用就是这样
+
+   ```java
+   ArrayList<String> list = new ArrayList<String>(); //规定了ArrayList里只能存String类型的数据
+   ```
+
+2. 泛型接口：子类实现接口时必须添加泛型
+
+   ```java
+   public interface Test<X>{
+     	public X value;
+   }
+   public class Son<X> implements Test<X>
+   ```
+
+3. 泛型方法：方法调用时传参数。方法的泛型与类无关——即，带有泛型的方法可以不放在带有泛型的类中
+
+4. 高级泛型：规范边界——extends super
+
+泛型不能使用基本类型。如果想使用基本类型，必须使用基本类型包装类。
+
+泛型泛的是所有的引用类型。
+
+```java
+ArrayList<Integer> list = new ArrayList<Integer>();
+```
+
+![image-20201230211605301](/Users/zhangxianyu/Java_Notes/DUYI_java_ii_Class.assets/image-20201230211605301.png)
 
