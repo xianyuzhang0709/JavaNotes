@@ -1590,7 +1590,12 @@ public boolean equals(Object anObject){
     String = s.toUpperCase()  //全部字符转为小写/大写。不改变原string。
 
 17. String = s**.trim**();  //去除前后多余的空格
-18. boolean = matches(String regex);  //判断是否符合正则表达式
+
+18. boolean = s**.matches**(String regex);  //判断是否符合正则表达式
+
+    * ```java
+      boolean result = str.matches("\\d{6-10}");
+      ```
 
 ##### String总结：
 
@@ -1599,4 +1604,132 @@ public boolean equals(Object anObject){
 ![image-20201229215222454](DUYI_java_ii_Class.assets/image-20201229215222454.png)
 
 ![image-20201229215910931](/Users/zhangxianyu/Java_Notes/DUYI_java_ii_Class.assets/image-20201229215910931.png)
+
+```java
+public String findMaxLengthString(String...strs){//不定量参数传入的方法
+  String result = strs[0];
+}
+```
+
+#### 2. StringBuilder/StringBuffer - java.lang
+
+默认继承：Object，实现了接口Serializable, CharSequence, Appendable
+
+String不可变是因为类中用于存字符的char[] value是private final修饰的。
+
+而StringBuffer和StringBuilder的char[] value是非final的，所以可以改变长度（换数组地址）。
+
+特性：
+
+* 可变字符串  char[] value; 动态扩容
+
+构造函数：
+
+* 无参构造器：默认长度16
+* 有参构造器：StringBuilder sb = new StringBuilder(30);  //自定义长度
+* 有参构造器：StringBuilder sb = new StringBuilder("abc");  //默认数组长度=字符长度+16
+* 有参构造器：StringBuilder sb = new StringBuilder(StringBuffer sf); //CharSequence是接口，主要对应的就是实现了这个接口的String, StringBuffer和StringBuilder，这里可以传任意一个。
+
+什么时候用它们：频繁要修改String时，用这俩。
+
+常用方法：
+
+1. sb**.append**(重载)  //sb的后面加东西
+
+   * 重载：boolean, char, char[], char[] int offset int len, CharSequence s [int start int end],
+   * double, float, int, long, Object, String, StringBuffer
+
+2. sb**.capacity**()  //字符串底层char[]容量
+
+   sb**.length**()  //字符串有效元素个数
+
+   sb**.setLength**()  //手动设置有效元素个数
+
+3. sb**.subString**(int start, [int end]) --> String  //返回String类型，原sb不变
+
+4. sb**.delete**(int start, [int end]) ---> StringBuilder  //给sb删掉[start,end)这部分字符。
+
+   sb**.deleteCharAt**(int index) ---> StringBuilder  //给sb删掉一个字符。
+
+   sb**.setCharAt**(int index, char replacement)  //把index位置的字符，改为replacement
+
+5. sb**.indexOf**(String str, [int fromIndex])
+
+   sb**.lastIndexOf**(String str, [int fromIndex])
+
+6. sb**.insert**(int offset, String / int / char value)  //底层方法就是，把value插进去，其他部分逐个复制到后面
+
+7. sb**.replace**(int start, int end, String str)  //没有重载，左闭右开
+
+8. sb**.reverse**()  //String没有实现这个，但是StringBuilder实现了
+9. sb**.toString**()  //把StringBuilder的value数组，构建一个String返回。
+
+10. sb**.trimToSize**()  //将数组中不用的容量去掉，变成length的长度的数组。
+
+![image-20201230155435196](DUYI_java_ii_Class.assets/image-20201230155435196.png)
+
+![image-20201230162344451](DUYI_java_ii_Class.assets/image-20201230162344451.png)
+
+![image-20201230163015494](DUYI_java_ii_Class.assets/image-20201230163015494.png)
+
+![image-20201230163748888](DUYI_java_ii_Class.assets/image-20201230163748888.png)
+
+String StringBuffer StringBuilder可以互相构建。
+
+* StringBuffer和StringBuilder完全一样，唯一的区别是线程安全问题。
+
+* StringBuffer的所有方法都有synchronized修饰，表示当前对象被锁定，不能被其他对象访问。所以基本方法线程安全。
+
+#### 3. 正则表达式
+
+一个带有一定规律的表达式
+
+作用：
+
+1. 格式校验：String类中提供一个方法boolean <-- s.matches("regex")
+2. 字符串的拆分替换：String类中提供replace split
+3. 字符串的查找：Pattern模式  Matcher匹配器
+
+> Java.util.regex包下Pattern类和Matcher类
+
+规则：
+
+1. 描述字符信息：
+   * [abc] : abc其中一个
+   * [^abc] : 除了abc，其他的任意一个
+   * [a-zA-Z] : 必须在这两个范围内
+   * `[a-z&&[^bc]]` : a-z范围内，除去b和c，其他任意一个
+   * &&且  |或
+   * . : 表示任意一个字符
+   * \d : digit数字 [0-9]
+   * \D : 非数字
+   * \s ：space留白 包括空格、回车、换行
+   * \S ：非留白
+   * \w ：单词
+   * \W : 非单词
+
+2. 描述出现的次数：
+   * ?  0/1次
+   * `*` :   0-n次
+   * `+` ：1-n次
+   * {n} : 固定n次
+   * {n, } : 至少n次
+   * {n,m} : n-m次
+
+3. 例子：
+
+   * [a-zA-Z]{6,10} : 字母出现6-10次
+
+4. 查找怎么做？
+
+   ```java
+   String s = "123456acd123456sdvs123456asdsdv";
+   Patter patter = Patter.compile("\\d{6}"); //1. 利用pattern类创建一个模式，理解为一个正则表达式对象
+   Matcher matcher = pattern.matcher(str); //2. 利用pattern模式对象创建一个匹配器
+   while(matcher.find()){
+     System.out.println(matcher.group());//3. 找到满足字符串格式的文字，并输出
+   }
+   ```
+
+
 
