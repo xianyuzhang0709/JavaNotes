@@ -2330,3 +2330,64 @@ hashMap底层的数据结构存储：
 
 ![image-20210101112027516](DUYI_java_ii_Class.assets/image-20210101112027516.png)
 
+#### 题目分析：
+
+三个类：
+
+1. 考试机
+
+   1. 属性：
+
+      * 题库HashSet —— 因为Set无重复（靠equals和hashCode方法）。HashSet=[题目对象，题目对象，题目对象]
+
+        * 题库HashSet里存一个个Question对象（title和answer属性）。根据Question的title属性(String equals)来判断是否有重复题目出现。
+
+        * Qestion类中，HashSet去重靠equals和hashCode，所以泛型所对应的类要重写这两方法。
+
+          ```java
+          public boolean equals(Object obj){  //注意方法参数和名字要和Object一致  //多态
+            if(this==obj){
+              return true;
+            }
+            if(obj instanceof Question){
+              Question o = (Question)obj; //向下造型
+              if(o.title.equals(this.title)){
+                return true;
+              }
+            }
+            return false;
+          }
+          public int hashCode(){
+            this.title.hashCode(); //用String的hashCode
+          }
+          ```
+
+          此时，把Question存入Set，Set就可以根据题目内容去重复（而不是obj的原始方法，每个对象的地址不一样就算不一样 ）了。
+
+      * 方法：随机组卷。
+
+        * 题目要不重复，学生还要用——要遍历：所以，先用Set存试题（去重），存完之后转成ArrayList（方便遍历）。
+
+        * 随机找到一个需要，去Set里找——但是Set没有index：所以，把题库转成ArrayList（就有了index）。
+
+          ```java
+          public ArrayList<Question> getPaper(){
+            //用Set存题目，去重。存完题目再转ArrayList，方便学生做题时遍历。
+            //  * 去重前提：Question类重写了equals和hashCode方法，不会因为Object原始的方法导致对象不同就不同。
+            HashSet<Question> paper = new HashSet<>();
+            
+            //把题库Set转ArrayList，便于通过index找到对应题目。（因为我们要使用随机数）
+            ArrayList<Question> questionBank = new ArrayList<>(this.questionBank);
+            while(paper.size()!=5){  //size()是有效元素个数！
+              int index = new Random.nextInt(questionBank.size());
+              paper.add(questionBank.get(index));  //ArrayList用get，Set用add
+            }
+          	return new ArrayList<Question>(paper); //HashSet -> ArrayList
+          }
+          ```
+
+          
+
+2. 老师
+
+3. 学生
