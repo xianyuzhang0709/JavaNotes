@@ -1735,7 +1735,7 @@ String StringBuffer StringBuilder可以互相构建。
 
 ![image-20201230174140889](DUYI_java_ii_Class.assets/image-20201230174140889.png)
 
-### 五、集合相关
+## 五、集合相关Collection - java.util
 
 集合是指，具有某种特性的具体或抽象的对象汇总而成的集合。
 
@@ -1749,22 +1749,24 @@ String StringBuffer StringBuilder可以互相构建。
 
 集合：Collection  Map
 
-|            | Collection接口        | Map接口                                         |
-| ---------- | --------------------- | ----------------------------------------------- |
-| 存储方式： | value形式存储         | Key-value形式（key无序无重复，value无序可重复） |
-|            | **List** - 有序可重复 |                                                 |
-|            | **Set** - 无序无重复  |                                                 |
-|            | **Queue**             |                                                 |
+|            | Collection接口                    | Map接口                                                 |
+| ---------- | --------------------------------- | ------------------------------------------------------- |
+| 存储方式： | value形式存储                     | Key-value形式（**key**无序无重复，**value**无序可重复） |
+|            | **List** - 有序可重复             |                                                         |
+|            | **Set** - 无序无重复              |                                                         |
+|            | **Queue** - 有序可重复 - 先进先出 |                                                         |
 
 序：顺序，指添加进去的元素，取出元素的顺序也一样。
 
 重复：两个对象元素一致。
 
-#### 1. List接口
+### 1. List(接口) - 有序可重复
 
-1. ArrayList
-2. LinkedList
-3. Vector
+#### 1.0 具体实现的类 - Vector, ArrayList, Stack, LinkedList
+
+1. Vector --> ArrayList  底层是动态数组
+2. Stack(栈)继承了Vector ---> 后进先出
+3. LinkedList  底层双向链表
 
 > ArrayList和Vector的区别：
 >
@@ -1772,7 +1774,7 @@ String StringBuffer StringBuilder可以互相构建。
 >
 > Vector是1.0版本出现。ArrayList是1.2版本。
 
-##### 1.1 ArrayList - java.util
+#### 1.1 ArrayList - java.util
 
 底层就是数组。
 
@@ -1863,7 +1865,7 @@ ArrayList什么类型都能存，取出的时候是多态效果，需要自己�
 
 JDK1.5之后增加了**泛型**。
 
-##### 1.1.1 泛型：
+##### 1.1.1 泛型
 
 **java中的`<E>`表示泛型，指任意类型。**比如HashMap<K,V>，你可以把K,V设置成任意类。
 
@@ -1912,7 +1914,7 @@ ArrayList<Integer> list = new ArrayList<Integer>();
 
 泛型只能表示引用数据类型。
 
-##### 1.2 Vector`<E>` - java.util
+#### 1.2 Vector`<E>` - java.util
 
 是ArrayList集合的早期版本（StringBuffer早---> StringBuilder晚）（Vector早1.0---> ArrayList晚1.2）
 
@@ -1926,7 +1928,7 @@ Vector线程同步，安全性高，效率低。
 
 常用方法
 
-##### 1.3 Stack栈 - Vector子类
+#### 1.3 Stack栈 - Vector子类
 
 > 底层：数组和链表都能实现。只要告诉我要先进先出，还是后进先出。栈和队列都是思想。
 >
@@ -1953,7 +1955,9 @@ Vector线程同步，安全性高，效率低。
 
 * 撤销功能。
 
-#### 1.4 Queue队列(接口) - LinkedList, ArrayDeque - java.util
+### 2. Queue(接口) - 队列
+
+实现类：**LinkedList**, **ArrayDeque**
 
 通常无参数构造方法创建。
 
@@ -1979,7 +1983,7 @@ Vector线程同步，安全性高，效率低。
 
 * 双十一0点秒杀：所有进入秒杀系统的人存入队列。
 
-##### 1.5 LinkedList - List和Queue的实现类 - java.util
+#### 1.5 LinkedList - List和Queue的实现类 - java.util
 
 所以LinkedList有常规的add remove等方法，也有Queue的offer,peek等方法。
 
@@ -2024,29 +2028,305 @@ LinkedList
 * 遍历：3ms
 * 删除：3ms
 
-##### 1.6 最常用：ArrayList和LinkedList
+#### 1.6 最常用：ArrayList和LinkedList
 
 > 用的怎么用取决于你对底层的理解多深入。所以要多翻源码。用起来更灵活。
 >
 > 什么场景下，怎么用就更好？
 
+### 3. Set(接口) - 无序无重复 - 重复则拒绝加入
+
+#### 3.0 具体的实现类 - HashSet，TreeSet
+
+#### 3.1 HashSet`<T>` - java.util
+
+实现接口：Collection  Set  Iterable  Clonable  Serializable
+
+底层：HashMap —— 数组+链表 = 散列表（临接链表）
+
+构造方法：无参数 有参数
+
+无序不重复：
+
+* 无序：存的顺序和取的顺序不一致。
+
+  * 算法本身有自己的顺序算法，排序算法是Hash算法。（存入的顺序不变的话，访问的顺序也是不变的，只是存入顺序≠访问顺序）
+
+* 无重复：
+
+  * 同时new String("aaa") 5次存入hashSet，hashSet.size() == 1
+  * 同时new Person("王") 5次存入hashSet，hashSet.size() == 5  //Person类里只有name属性，和以name为参数的构造方法
+  * **无重复：用equals方法和hashCode方法共同作用。**
+  * Set集合是**发现重复的元素，拒绝收入**。
+
+  > 此处视频练习：
+  >
+  > ```java
+  > //要看hashSet里的唯一一个元素的name:
+  > System.out.println(hashSet.iterator().next().name); 
+  > //方法二
+  > 修改toString方法，使用StringBuilder进行拼接操作--> return builder.toString();或 return new String(builder);
+  > System.out.println(hashSet); //hashSet打印是效果是[元素1.toString(),元素2.toString(),...]
+  > ```
+
+方法：
+
+增：add(value) = boolean    addAll(collection c)   ---> 没有index参数
+
+删：retainAll()交集  removeAll()差集
+
+​		remove(Object) = boolean
+
+改：无方法
+
+查：for each遍历
+
+​		iterator()  获取一个迭代器对象
+
+> 迭代器：`Iterator<E>`接口有四个方法
+>
+> ```java
+> public interface Iterator<E>{//4个方法：
+>   	E next(); //返回E，如果达到集合尾部next()会抛出NoSuchElementException异常
+>   	boolean hasNext();//必须先调用hasNext(),才能调用next()
+> 		void remove();
+>   	default void forEachRemaining(Consumer<? super E> action)//限定Consumer的泛型必须是E的父类。--> 用于for each
+> }
+> ```
+>
+> 迭代器的访问顺序因集合本身的存储特点而不同：
+>
+> * 如果是ArrayList，从index=0开始，直到结束。
+>
+> * 如果是HashSet，会以基本上随机的顺序获得元素。（但可以确保遍历所有元素）
+>
+> java集合类(Collection)中的迭代器和其他类库的迭代器不同，java迭代器的**查找**和**位置变更**紧密耦合。找到一个元素唯一的方法是next()，而在执行查找操作的同时，迭代器的位置会随之移动。
+
+* **生成和使用**一个迭代器 - while循环
+
+  ```java
+  HashSet<String> hashset = new HashSet<String>();  //.add("asd");重复n次这里省略...
+  Iterator<String> iter = hashset.iterator;  //用hashset创建迭代器，Iterator泛型变量接收。注意Iterator的泛型类型要跟hashset对象所定义泛型的一致。
+  while(iter.hesNext()){  //只有hasNext()返回true时，才继续
+     String s = iter.next();
+  }
+  ```
+
+* for each遍历：
+
+  ```java
+  for(String s : hashset){
+    System.out.println(s); //可以对element做操作了
+  }
+  ```
+
+  * 凡是实现了Iterable接口的类，都可以用for each遍历。
+
+  * **Iterable接口**只有一个方法：
+
+    ```java
+    public interface Iterable<E>{
+      Iterator<E> iterator();//抽象方法iterator 返回一个Iterator<E>
+    }
+    ```
+
+    **Collection接口extends了Iterable接口，所以所有的Collection（List和Map）都实现了iterator方法——可以使用for each方法遍历元素。**forEachRemaining方法是用来加入lambda表达式来对每一个元素进行操作的。
+
+    ```java
+    forEachRemaining(ele -> do sth with ele);
+    ```
+
+    **HashSet中的iterator方法**实现：
+
+    ```java
+    public Iterator<E> iterator() {
+            return map.keySet().iterator();
+    }
+    ```
+
+#### 3.2 TreeSet `<E>` - java.util
+
+底层：TreeMap 二叉树 利用Node(left item right)
+
+构造方法：带Collection的构造方法
+
+方法：
+
+​	add(E e)  iterator()  remove(E e)  没有修改  size()
+
+无序不重复：
+
+* 无序：treeSet集合本身有顺序(字典顺序排布)，只是存入顺序≠取出顺序
+  * compareTo --> eg: String类，按字母的字典顺序排布(Unicode)
+* **不重复：存入TreeSet的元素的类必须实现了Comparable接口。**
+  * 如果想把自己写的类型的对象存入TreeSet集合，可能随意存储，需要让自己的类实现`Comparable<T>`接口。否则会抛出ClassCastException类转化异常。
+  * 底层是用**compareTo**来排序和存储的。以及**判断重复**也是用compareTo。
+
+#### 3.4 如何学习Set：尝试自己存入自定义类型的元素
+
+![image-20201231213747088](DUYI_java_ii_Class.assets/image-20201231213747088.png)
+
+![image-20201231214702827](DUYI_java_ii_Class.assets/image-20201231214702827.png)
+
+![image-20201231214759459](DUYI_java_ii_Class.assets/image-20201231214759459.png)
+
+### 4. Map(接口)映射 - 无序不重复 - 重复则覆盖原有
+
+存储方式：key - value
+
+* key无序不重复：无序——存入顺序≠读取顺序。不重复——key
+* value无序可重复
+
+#### 4.1 实现了Map接口的类：HashMap, TreeMap, Properties
+
+#### 4.2 HashMap<K,V> - java.util
+
+**K** - the type of keys maintained by this map - 无序不重复
+
+**V** - the type of mapped values - 可重复
+
+早期版本：HashTable
+
+构造函数：
+
+* 无参数：初始化容量16+load factor 0.75(扩容因子0.75)
+
+* 带初始化容量的参数
+* 带参：HashMap(Map<? extends K, ? extends V> m); //把另一个map转换为HashMap
+
+方法：
+
+增：**put**(k,v) = v  ：key的存入顺序≠取得顺序。**key相同将原有键值对覆盖存入，而不是拒绝**。
+
+删：**remove**(k) = v
+
+改：可以调用put。**replace**(key, newValue)
+
+查：**get**(k) = v
+
+有效元素：**size**()
+
+遍历：获取所有的key，遍历key，通过key获得value。**keySet**() = Set （返回一个Set接口的实例？！）
+
+​			**entrySet**() = Set`<Entry>` //获得所有entry，以Set形式 - 需要迭代器遍历
+
+> Map.Entry是：
+>
+> ```java
+> public interface Map<K,V>{
+>    int size();
+>    boolean isEmpty();
+>    ...
+>    Set<Map.Entry<K,V>> entrySet(); //方法entrySet
+>    interface Entry<K,V>{ n个方法... } //内部接口Entry
+> }
+> ```
+>
+> HashMap在存入对象时，是用了一个**Node**<K,V> implements **Map.Entry**<K,V>，这个Node实现了Map接口里的Entry接口(内部类)。
+
+```java
+HashMap<Integer,String> hashMap = new HashMap<>();
+//存入n个值...
+Set<Integer> keySet = hashMap.keySet(); //根据keySet建立迭代器
+Iterator<Integer> itor = keySet.iterator();
+while(itor.hasNext()){
+  Integer key = itor.next();
+  String value = hashMap.get(key);
+}
+
+//Entry遍历
+Set<Map.Entry<Integer,String>> entrys = map.entrySet();//根据entrySet建立迭代器
+Iterator<Map.Entry<Integer,String>> it = entrys.iterator();
+while(it.hasNext()){
+  Map.Entry<Integer,String> entry = it.next();//得到一个一个的entry
+  entry.getKey();  //k
+  entry.getValue();  //v
+}
+```
+
+其他方法：
+
+* clear()   containsKey(k)  containsValue(v)   isEmpty()  
+* getOrDefault(k, defaultValue)
+
+* putAll(map)  //泛型遵守<? extends K, ? extends V>
+* putIfAbsent(k,v)  //如果key已经存在，则不存入（put是覆盖旧的）
+
+#### 4.3 Map集合在什么时候用？各集合特点。
+
+1. 想要存储一组元素——数组or集合。如果存储元素以后长度不变，则数组。如果长度不确定，则集合。
+2. 选集合：List  Set  Map
+   1. List有序可重复——存入取出顺序一致
+      * ArrayList (Vector) —— 适合遍历
+      * LinkedList —— 适合插入删除
+      * Stack —— 栈(弹夹)：后进先出
+      * Queue —— LinkedList
+   2. Set无序无重复(拒绝存入)——如果你希望存储的元素自动去重
+      * HashSet —— 自动去重，hash算法排序（去重方法：equals和hashCode）性能更高（散列表）
+      * TreeSet —— 自动去重，自动排序（去重和排序方法：compareTo）—— 想自定义排序方法，用这个
+   3. Map k-v —— 通过唯一k快速找寻v（无序，k不重复）
+      * HashMap —— 性能更高（散列表）
+      * TreeMap —— 自动排序
+
+练习：用户登录
+
+```java
+1. 一维数组：一个数组存用户名。一个数组存密码。for循环，找到名字所在的i，i位置的对应的密码也对，true。
+2. ArrayList：
+  				arraylist.add("正中天-123");存入n个人;
+  				for(int i=0;i<arraylist.size();i++){
+  						String[] value = arraylist.get(i).split("-");//正则表达式拆分 //v[0]姓名  v[1]密码
+            	if(value[0].equals(name)){
+                if(value[1].equals(password)){
+                  return true;
+                }
+                break;
+              }
+					}
+  				return false;
+3. Set: HashSet
+  				hashset.add("正中天-123");存入n个人;
+  				迭代器遍历{拆分字符串; 两个if嵌套进行判断} 输出结果。
+4. Map: HashMap
+					map.put("正中天",123);存入n个;
+					Integer mapPassword = map.get(inputName);
+					if(mapPassword!=null && mapPassword.equals(Integer.parseInt(inputPassword))){
+            return true
+          }
+					return false;
+```
+
+* ArrayList和数组看起来差不多，二者本来就很像。
+
+hashMap底层的数据结构存储：
+
+* 散列表形式=数组+链表
+* Person对象存入HashMap中？可以
+  * hashCode方法：不同的对象可能会产生相同的hashCode码，但不同的hashCode码应该对应不同的对象
+  * ![image-20210101103414727](DUYI_java_ii_Class.assets/image-20210101103414727.png)
+
+* 这个Entry跟我们理解的Node是一样的，只是这个Entry实现了Entry接口
+
+#### 4.4 TreeMap<K,V> - 无序无重复(覆盖) - key自然有序
+
+构造方法：无参，带Map有参
+
+方法：
+
+* put  remove  get  replace size
+
+底层数据结构：
+
+* 二叉树——**红黑二叉树**
+* key自然有序，使用方法是compareTo，所以key所在的类必须实现了Comparable接口。
+* Entry{left right parent} —— 如下图，存入顺序：523718946
+* ![image-20210101114456255](DUYI_java_ii_Class.assets/image-20210101114456255.png)
+
+* 左旋右旋：如果一个分支上挂得太多，就把多的那个分支的节点放到头节点。
 
 
 
+#### 4.n 练习：考试系统
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![image-20210101112027516](DUYI_java_ii_Class.assets/image-20210101112027516.png)
 

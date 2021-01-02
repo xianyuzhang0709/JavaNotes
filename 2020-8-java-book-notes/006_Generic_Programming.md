@@ -17,7 +17,7 @@ public class Pair<T>{
 ### 2. 泛型方法
 
 ```java
-public static <T extends Comparable> Time(T t){
+public static <T extends Comparable> boolean contains(Collection<T> ct){
   ...
 }
 ```
