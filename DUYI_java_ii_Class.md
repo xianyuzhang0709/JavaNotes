@@ -1611,7 +1611,7 @@ public String findMaxLengthString(String...strs){//不定量参数传入的方�
 }
 ```
 
-#### 2. StringBuilder/StringBuffer - java.lang
+#### 2. StringBuilder(StringBuffer) - java.lang
 
 默认继承：Object，实现了接口Serializable, CharSequence, Appendable
 
@@ -2386,8 +2386,16 @@ hashMap底层的数据结构存储：
           }
           ```
 
-          
-
 2. 老师
 
 3. 学生
+
+#### 练习后的知识补充：
+
+* Scanner可以一次创建，多次使用（每次调用都会接收一次输入）。而不是每次都要新建一个Scanner对象。
+* Random类为什么可以这么用：int index = new Random.nextInt(8); ?
+  * Random类的对象也是，一次创建，每次调用都会生成一个新的数字。但是直接在类名后面调用，我觉得是因为，这个new本身是在new一个对象，这个对象直接调用方法。
+  * 纯粹的类型调用方法，常见于类的静态方法。比如Math类所有的方法都是静态方法。可以不需要创建对象，通过类本身调用方法。
+* Math类在java.lang。Random类在java.util。
+* String的equals方法还有equalsIgnoreCase()。
+
