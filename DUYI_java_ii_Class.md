@@ -2056,6 +2056,7 @@ LinkedList
 
   * 同时new String("aaa") 5次存入hashSet，hashSet.size() == 1
   * 同时new Person("王") 5次存入hashSet，hashSet.size() == 5  //Person类里只有name属性，和以name为参数的构造方法
+    * 原因是Person类没有重写hashCode->Object类的hashCode方法会用对象地址来计算hash值。
   * **无重复：用equals方法和hashCode方法共同作用。**
   * Set集合是**发现重复的元素，拒绝收入**。
 
@@ -2399,3 +2400,133 @@ hashMap底层的数据结构存储：
 * Math类在java.lang。Random类在java.util。
 * String的equals方法还有equalsIgnoreCase()。
 
+## 异常Exception - java.lang
+
+Throwable父类
+
+* Error
+  * StackOverFlowError
+  * OutOfMemoryError
+* Exception
+  * RuntimeException（运行时异常）
+  * IOException
+
+#### 异常的分支体系：
+
+* 运行时异常（非检查异常）
+
+  * Error和RuntimeException都算做运行时异常
+  * javac编译时不会提示和发现，在程序编写时不要求必须处理，如果我们愿意，可以添加处理手段（try或throws）。
+  * 要求程序员在出现这样的异常时，知道怎么产生并且如何修改。
+    1. InputMisMatchException 输入不匹配（input.value();//abc）
+    2. NumberFormatException 数字格式化（Integer.parseInt("123.45"));
+    3. NegativeArraySizeException 数组长度为负
+    4. ArrayIndexOutOfBoundsException 数组index越界
+    5. NullPointerException 空指针异常
+    6. ArithmeticException 数学异常 (10/0不合法，但是10.0/0合法，会得到Infinity)
+    7. ClassCastException 造型异常
+    8. StringIndexOutOfBoundsException 字符串index越界（aString.charAt(aString.length+10);）
+    9. IndexOutOfBoundsException 集合index越界
+    10. IllegalArgumentException 非法参数异常（调用方法时参数传入错误）
+
+* 编译时异常（检查异常）
+
+  * 除了Error和RuntimeException外其他的异常
+
+  * javac编译时，强制要求我们对这一的异常做处理（try或throws)
+
+  * 因为这样的异常在程序运行过程中极有可能产生问题，异常产生后续的执行就停止。
+
+  * 处理之后：后续程序不受影响
+
+    1. InterruptException
+
+       ```java
+       try{
+         Thread.sleep(5000);
+       }catch(Exception e){
+         ...
+       }
+       ```
+
+#### 处理异常的手段
+
+处理异常，不是异常就消失了。而是，异常处理后，后续的代码不会因为异常而终止执行。--> 打印输出异常。
+
+```java
+try()
+  catch(异常类名 e){}
+		[finally{}]
+```
+
+1. try不能单独出现，后面必须有catch或finally。
+2. catch有一个小括号，参数为要捕获的异常，一个catch可以捕获一种异常。
+3. catch可以有多个，用于捕获不同的异常，并作出不同的操作。
+4. 程序一旦出现异常，后面的语句就不再执行，直接执行catch部分语句。
+5. finally不是必须有的。finally的代码，必须执行。
+6. 如果try有返回值，finally一定会执行。try能执行完的话，返回try的返回；如果try有异常，就执行最后的return。但finally无论如何都会执行。
+
+![image-20210104224423285](DUYI_java_ii_Class.assets/image-20210104224423285.png)
+
+#### 不处理异常，而是把异常throws抛出：
+
+1. 异常只能在方法的结构上抛出，属性不可以抛出异常。**throws**。
+
+   ```java
+   public String test() throws NullPointerException, ClassCastException{
+     ...
+   }
+   ```
+
+2. 谁调用这个方法，谁就要处理异常。或者如果不想处理，就继续抛出。
+
+#### 自定义异常
+
+0. 没有已有的异常可以描述我的问题
+
+1. 描述一个异常的类：ArrayBox --> BoxIndexOutOfBoundsException
+2. 这个类要继承一个父类：
+   * 继承RuntimeException ---> 运行时异常（不是必须要添加处理手段，因为可以通过编译）
+   * 继承Exception ---------------> 编译时异常（必须添加异常处理）
+
+3. 创建一个自定义异常类的对象
+
+   * 通过**throw**，抛出异常。
+
+     ```java
+     public class MyException extends RuntimeException{ //如果继承Exception，调用包含此异常的方法，必须处理异常（try或throws）
+       public MyException(){}
+       public MyException(String msg){
+         super(msg); //父类RuntimeException构造函数-->父类传给父类的父类Throwable类，把msg存为String类型的detailMessage。
+       }
+     }
+     public class Test{
+       public void testException(){
+         if(3>2){
+           throws new MyException(); //抛出一个自定义的运行时异常
+         }
+       }
+       //带信息的抛出异常
+       public void testException2() throws MyException{//表示本方法会抛出一个异常
+         if(3>2){
+           thorws new MyException("because you just called a method throws an MyException")
+         }
+       }
+       public void test1(){
+         Test ts = new Test();
+         ts.testException();//此方法调用会抛出一个自定义异常。运行时异常不是必须处理，但会中断程序。如果自定义异常继承自Exception，此处必须处理异常。
+       }
+       //处理了异常的一个方法：
+       public void test2(){
+         Test ts = new Test();
+         try{
+           ts.testException2(); //抛出带msg信息的异常
+         }
+         catch(MyException me){ //或Exception e
+           ...
+         }
+       }
+     }
+     ```
+
+     
