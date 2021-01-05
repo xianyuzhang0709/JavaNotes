@@ -377,4 +377,51 @@ File file = new File("D://test//test.txt");  //file与test.txt形成了映射关
 2. .write(char[] c)
 3. .wirte(String s)
 
-4. 
+> #### Byte 和 char
+>
+> 1 bit = 0/1
+>
+> 1byte = 8bits
+>
+> 1kb = 1024 bytes
+>
+> |       |                 |          |
+> | ----- | --------------- | -------- |
+> | byte  | 1byte = 8 bits  | -128~127 |
+> | short | 2bytes = 16bits | 3万2     |
+> | int   | 4bytes = 32bits | 21亿     |
+> | long  | 8bytes = 64bits |          |
+>
+> char是UTF-16(16-bit Unicode Transformation Format)编码的字符集。由1-2个16bits的代码单元组成。
+>
+> * is a [character encoding](https://en.wikipedia.org/wiki/Character_encoding) capable of encoding all 1,112,064 non-[surrogate](https://en.wikipedia.org/wiki/Universal_Character_Set_characters#Surrogate) [code points](https://en.wikipedia.org/wiki/Code_point) of Unicode。
+>
+> * UTF-16的编码方式为：
+>
+>   1. Characters with values less than 0x10000 are represented as a single 16-bit integer with a value equal to that of the character number. 
+>
+>      * 值<65536的char，直接用16-bit的整数来表示这个char。
+>
+>   2. Characters with values between 0x10000 and 0x10FFFF are represented by a 16-bit integer with a value between 0xD800 and 0xDBFF (within the so-called high-half zone or high surrogate area) followed by a 16-bit integer with a value between 0xDC00 and 0xDFFF (within the so-called low-half zone or low surrogate area).
+>
+>      ```
+>      Note: Values between 0xD800 and 0xDFFF are specifically reserved for use with UTF-16, and don't have any characters assigned to them.
+>      ```
+>
+>      * 65536<=char值<=1114111的char，用两个大小分别在55296~56319和56320~57343的16-bit整数来表示。
+>      * 在这两个区间，没有对应的Unicode字符，这两个区间纯粹用于为UTF-16编码。
+>
+>   3. Characters with values greater than 0x10FFFF cannot be encoded in UTF-16.
+>
+> 在学String的时候，有codePoints和code unit的区别问题。
+>
+> * String的本质是一个char系列。但是char是UTF-16编码的。
+> * 对于Unicode编码范围大于65535的char，要用两个code units来表示这个字符。
+> * str.length() 得到的是这个字符串的code units数量。当你使用str.charAt(i)，得到的也是对应的code unit的结果，而不是真正的char。如果你想得到一个字符串真实的长度，要用str.codePointCount()。
+> * 所以书中强烈不建议在程序中使用char类型。并且把字符串当做抽象数据类型处理。（没懂）
+
+疑惑是：文件用byte读写和用char读写的区别是什么？
+
+* 最终两种方式都可以把文件底层的010101完整地复制过来。但是如何转回呢？哦，因为我们不需要输出？？？
+* 当我们要输出打印的时候，就要考虑，当初那个文字，在写入时，用的是什么字符集。数字就是那些数字，它包含着完整的信息。你如何解码，决定了这个字符它转为char之后，表现为什么——是英文，是数学符号，是德文，中文，阿拉伯文。所以说，解码由字符集决定。
+* 你写了什么，就存进去了什么。中文也有储存的方式。但是怎么把复制过来的数字们，转成原文。需要字符集。
