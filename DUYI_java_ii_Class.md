@@ -2385,6 +2385,14 @@ hashMap底层的数据结构存储：
             }
           	return new ArrayList<Question>(paper); //HashSet -> ArrayList
           }
+          
+          //随机的方法2：map.keySet().toArray() 用数组产出随机顺序
+          HashMap map = new HashMap<Student,Integer>();
+          填充map...
+          String[] s = map.keySet().toArray(new String[map.size()];//用keySet生成一个String类的数组
+          Random r = new Random();
+          Integer randomkey = map.keySet().get(r.nextInt(map.size()));
+          //随机方法3：Collections.shuffle()可以把List打乱。赋值到数组，打乱index再返回List。                                
           ```
 
 2. 老师
@@ -2529,4 +2537,11 @@ try()
      }
      ```
 
-     
+![image-20210105100446706](DUYI_java_ii_Class.assets/image-20210105100446706.png)
+
+![image-20210105100533531](DUYI_java_ii_Class.assets/image-20210105100533531.png)
+
+## 练习
+
+ATM系统：登录，查询余额，存款，取款，转账，开户，销户，退出
+
