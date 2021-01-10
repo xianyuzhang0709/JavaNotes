@@ -576,7 +576,7 @@ StringReader   StringWriter
 1. 描述一个类
 2. 实现implements一个父接口Runnable
 3. 重写run方法
-4. new一个线程对象：Thread t1 = new Thread(new People("博尔特"));
+4. new一个线程对象：`Thread t1 = new Thread(new People("博尔特"));`
 
 例子3：12306窗口卖票。
 
@@ -586,5 +586,38 @@ StringReader   StringWriter
 >
 > * 属性：ticket对象要存入系统的集合属性中——用vector比ArrayList好，因为线程安全。`private Vector<Ticket> tickets = new Vector<>();`
 
-问题：
+![image-20210110205319176](DUYI_java_iii_IO+Threads+GUI.assets/image-20210110205319176.png)
 
+* 所采用的例子是运动员跑步。
+
+二、线程状态切换 - 生产消费者模型
+
+生产者放东西，消费者拿东西。尽量平衡放和拿的速度。
+
+购票例子：利用Vector集合的线程安全特性，多个线程并发操作同一个集合时，不会抢夺资源。
+
+生产消费者模式，会引发线程安全问题——资源抢夺的问题。
+
+解决线程安全问题：
+
+* 让仓库对象在被线程访问的时候，被锁定。那么仓库对象只能被一个线程访问，其他线程出于等待状态。
+
+* 修饰特征符：synchronized 同步——只有一个线程访问。（线程安全锁）
+  1. 放在方法结构上：锁定的是调用这个方法的对象。被访问这个对象的线程锁定。
+
+     ```java
+     public synchronized void get(){}
+     ```
+
+  2. 放在方法（构造方法、块）内部：
+
+     ```java
+     public void get(){
+       ...
+         ...
+         synchronized(其他对象){...}  //可以锁定调用这个方法的对象和其他对象
+       ...
+     }
+     ```
+
+     
