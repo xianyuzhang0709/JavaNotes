@@ -527,3 +527,64 @@ ObjectInputStream   ObjectOutputStream
 ## 五、字符串流
 
 StringReader   StringWriter
+
+
+
+# 线程
+
+之前我们接触过：
+
+* String家族：StringBuffer -> StringBuilder
+
+* 集合：Vector -> ArrayList      HashTable -> HashMap
+
+线程相关概念：
+
+* 程序：一组静态代码
+* 进程：正在执行的程序
+* 线程：正在执行程序中的小单元
+
+线程：
+
+1. 主线程：系统线程
+2. 用户线程：main
+3. 守护线程：GC
+
+学习线程：
+
+* 线程——操作系统级别 CPU
+
+* 如何在java中创建线程
+
+* 掌握每一个线程的几种不同状态，以及状态间如何切换
+
+![image-20210110185621681](DUYI_java_iii_IO+Threads+GUI.assets/image-20210110185621681.png)
+
+实现线程的过程：
+
+1. 自己描述一个类
+2. 继承extends父类Thread
+3. 重写run方法
+4. new一个线程对象，调用strat()让线程进入就绪状态（CPU分配时间碎片，调用我们重写的run()就可以执行了）
+
+例子1：跑步小例子
+
+例子2：字节型文件输入流，5个线程对象同时读。
+
+避免单继承缺陷的，实现线程的过程2：
+
+1. 描述一个类
+2. 实现implements一个父接口Runnable
+3. 重写run方法
+4. new一个线程对象：Thread t1 = new Thread(new People("博尔特"));
+
+例子3：12306窗口卖票。
+
+> User类，Ticket类这种只有属性，没有方法的类，一般存在文件中。所以里面的属性，最好不要写基本类型，全部用引用类型和包装类。因为文件读取可能会有读不出内容的时候，会是null，如果存入基本数据类型，会异常。
+>
+> System12306类：
+>
+> * 属性：ticket对象要存入系统的集合属性中——用vector比ArrayList好，因为线程安全。`private Vector<Ticket> tickets = new Vector<>();`
+
+问题：
+
