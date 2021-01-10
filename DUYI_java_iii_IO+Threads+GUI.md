@@ -22,7 +22,7 @@
 
 
 
-### 一、File类
+## 一、File类 - 文件流
 
 **An abstract representation of file and directory pathnames;** 
 
@@ -180,7 +180,7 @@ File file = new File("D://test//test.txt");  //file与test.txt形成了映射关
 
 5. 文件夹的路径（找父路径）
 
-### 二、字节型文件流 - Stream
+### 1、字节型文件流 - Stream
 
 容器：
 
@@ -193,7 +193,7 @@ File file = new File("D://test//test.txt");  //file与test.txt形成了映射关
    * 数据虽然安全了，但需要通过IO操作文件。不能像前三个一样，直接操作。
    * 这就是数据库。
 
-#### 2.1 FileInputStream类 - 继承InputStream(字节型输入流的父类)
+#### 1.1 FileInputStream类 - 继承InputStream(字节型输入流的父类)
 
 构造函数：
 
@@ -280,7 +280,7 @@ File file = new File("D://test//test.txt");  //file与test.txt形成了映射关
 
 * 通过File对象来间接操作文件。
 
-#### 2.2 FileOutputStream类 - 继承OutputStream(字节型输出流的父类)
+#### 1.2 FileOutputStream类 - 继承OutputStream(字节型输出流的父类)
 
 构造函数：
 
@@ -325,7 +325,7 @@ File file = new File("D://test//test.txt");  //file与test.txt形成了映射关
 3. 文件夹的复制（递归）
 4. 文件的剪切：先复制，然后删除原文件
 
-### 三、字符型文件流 - Reader
+### 2、字符型文件流 - Reader
 
 字节型输入流**读取中文**：会按照字节范围读，中文字符占两个字节。拆能拆着读，关键是返回时组合不能有问题。
 
@@ -353,7 +353,7 @@ File file = new File("D://test//test.txt");  //file与test.txt形成了映射关
   
   * 能处理的文件是：纯文本文件。即用记事本打开能看懂的。docx就不是这类型。
 
-#### 3.1 FileReader - InputStreamReader - Reader
+#### 2.1 FileReader - InputStreamReader - Reader
 
 构造函数：
 
@@ -368,7 +368,7 @@ File file = new File("D://test//test.txt");  //file与test.txt形成了映射关
 2. .read(char[] c) 一次读c.length个字符 --> int读取到的字符个数
    * .read(new char[1024])。把读取到的字符存入char数组。
 
-#### 3.2 FileWriter - OutputStreamWriter - Writer
+#### 2.2 FileWriter - OutputStreamWriter - Writer
 
 构造函数：
 
@@ -430,7 +430,7 @@ File file = new File("D://test//test.txt");  //file与test.txt形成了映射关
 * 当我们要输出打印的时候，就要考虑，当初那个文字，在写入时，用的是什么字符集。数字就是那些数字，它包含着完整的信息。你如何解码，决定了这个字符它转为char之后，表现为什么——是英文，是数学符号，是德文，中文，阿拉伯文。所以说，解码由字符集决定。
 * 你写了什么，就存进去了什么。中文也有储存的方式。但是怎么把复制过来的数字们，转成原文。需要字符集。
 
-#### 3.3 字符集
+#### 2.3 字符集
 
 计算机最早设计时只处理英文字母、数字和符号——1字节  8bits 256就够。
 
@@ -453,6 +453,10 @@ IDE默认字符集：
 * IDEA = UTF-8
 * Eclipse = BGK
 
+> 指定字符集进行String构建：new String(byte[], "UTF-8");
+>
+> 根据字符集解读String：String s = "你我他";   byte[] b = s.getBytes("UTF-8");
+
 HTML浏览器解析文字使用的字符集：UTF-8或GBK
 
 > 理解：文字在写入的时候，编辑器或系统本身有默认的编码字符集，一个字被通过某种方式编码储存在电脑上(010101-数字)。
@@ -462,3 +466,64 @@ HTML浏览器解析文字使用的字符集：UTF-8或GBK
 > * 当我们读取的时候，有底层的转码过程，即把01001这样的数字转为对应char值的过程。编码的字符集，和逆编码的字符集如果不一样，必然会有不同的结果出来。
 >   * 我可能需要试一下，mac记事本里写中文，idea是否能读取出来。byte应该不行（不一定）。
 >   * byte用数组测。char用超过65535的值测。
+
+### 3、缓冲流*
+
+为了在流管道内，增加缓存的数据，让我们使用流读取文字更加稳定流畅。
+
+#### 3.1 **BufferedInputStream** / **BufferedOutputStream**
+
+* 带缓冲流的文件字节流：**BufferedInputStream** / **BufferedOutputStream**
+
+  * 构建方式：使用低级流构建 -> 真实操作还是低级流，只不过高级流有缓存。
+
+    方法：与低级流方法基本一致
+
+    * BufferedOutputStream没有append属性。因为高级流的操作由低级流完成。
+
+#### 3.2 BufferedReader / **BufferedWriter**
+
+* 字符流：**BufferedReader** / **BufferedWriter**
+  * read方法：.read()  .readLine()读一整行-->String
+  * write方法：.write(int / char[] / String)      .newLine()光标移到下一行   .flush() -> Flushes the Stream
+
+## 二、数组流
+
+byte[]           ByteArrayInputStream  ByteArrayOutputStream
+
+char[]           CharArrayReader     CharArrayWriter
+
+## 三、数据流
+
+DataInputStream     DataOutputStream
+
+读取基本数据。
+
+## 四、对象流*
+
+ObjectInputStream   ObjectOutputStream
+
+对象的序列化/反序列化：
+
+* 对象序列化指：将一个对象拆分为字节碎片，记录在文件中
+* 对象反序列化：将对象的字节碎片组合成一个完整的对象
+* 要使用对象流的对象/类：必须实现了Serializable接口(示意性接口，无任何实质性操作)
+
+构造：对象流是高级流，需要一个低级流为它干活。
+
+对象存入文件时，遇到的问题：
+
+* 对象所在的类需要序列化，即实现序列化接口
+* 同时为了对象可以反序列化，需要加一个属性 private long serialVersionUID = 任意Long;用于检测版本。
+
+对象读取时，遇到的问题：
+
+* 对象没有serialVersionUID：需要在对象所在类，加一个属性。
+
+> EOFException：说明没有对象
+
+通常，我们会把对象放在集合里，然后把集合用对象流存入文件。
+
+## 五、字符串流
+
+StringReader   StringWriter
