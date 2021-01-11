@@ -622,13 +622,21 @@ StringReader   StringWriter
 
   3. return不如让线程切换到等待状态。
 
-     * wait()   Object类中的方法
+     * wait()   Object类中的方法 —— 睡眠
 
-     * notify()   notifyAll()  Object类中的方法
+     * notify()   notifyAll()  Object类中的方法 —— 唤醒
 
-       > sleep()   run()  start()  是Thread类中的方法
+       > notify()随机叫醒一个线程，所以一般notifyAll()全部叫醒。
+       >
+       > 但是有时候，即使你全部唤醒，但是一经判断又执行不了，又进入了睡眠状态。
+       >
+       > 所以，设置优先级的方法，来帮助我们改变线程顺序，但也不完全能决定线程顺序。
+       >
+       > * sleep()   run()  start()  是Thread类中的方法
 
      * this.wait() ---> 仓库对象调用wait()，不是仓库对象等待，是访问仓库的线程等待。
      * 会产生一个假死状态——所有线程进入等待状态：
        * this.notifyAll() ---> 消费者叫醒所有线程。
-       * 设置线程优先级：producer p = new Producer()
+       * 设置线程优先级：producer p = new Producer();  p.setPriority(10);  p.getPriority();
+         * 1-10，数字越大，优先级越高，更容易获得CPU分配的资源碎片
+         * 
