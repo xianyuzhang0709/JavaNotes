@@ -662,3 +662,19 @@ StringReader   StringWriter
 
 ![image-20210112221955426](DUYI_java_iii_IO+Threads+GUI.assets/image-20210112221955426.png)
 
+## 三、join
+
+Thread类方法。
+
+```java
+public final synchronized void join(long millis){ ... }
+```
+
+设计一个模型：
+
+1. 两个线程：one和two，tow加入one里面
+2. 设计模型时：two线程在one线程的run()方法里创建，保证二者的先后顺序
+3. two.join();
+   * .join() 无参数表示一直等two执行完，one才执行
+   * .join(2000)  有参数(毫秒值)表示one等待two2000毫秒时间，然后不再等待，将two推出，自己继续执行。
+
