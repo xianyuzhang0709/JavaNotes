@@ -831,7 +831,7 @@ public final synchronized void join() throws InterrupedException{
 一个线程应用。Timer是一个线程类。
 
 ```java
-Timer timer = new Timer();//启动一个小线程，做记录，每隔一段时间。
+Timer timer = new Timer();//启动一个timer thread小线程，做记录，每隔一段时间。
 timer.schedule(TimerTask task, Date firstTime, long delay, long period); //毫秒值
 
 //使用.schedule()方法:
