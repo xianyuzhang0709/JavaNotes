@@ -664,17 +664,187 @@ StringReader   StringWriter
 
 ## 三、join
 
-Thread类方法。
-
-```java
-public final synchronized void join(long millis){ ... }
-```
+Thread类方法：让两个并行的线程合为一个单线程。
 
 设计一个模型：
 
-1. 两个线程：one和two，tow加入one里面
+1. 两个线程：one和two，让tow加入one里面
 2. 设计模型时：two线程在one线程的run()方法里创建，保证二者的先后顺序
-3. two.join();
-   * .join() 无参数表示一直等two执行完，one才执行
-   * .join(2000)  有参数(毫秒值)表示one等待two2000毫秒时间，然后不再等待，将two推出，自己继续执行。
+3. two.join() 则two执行完，one继续执行；two.join(2000) 则two执行2秒后，one不再等待，继续自己的执行。
+
+```java
+public class ThreadOne extends Thread{
+  public void run(){
+    //one先启动
+    ThreadTwo two = new ThreadTwo();
+    two.start();//two就绪 --> CPU分配后，自动启动
+    try{
+      two.join(2000);//two加入one。谁加入，谁join。                -----//线程对象.join()要try-catch
+    }catch(InterruptedException e){
+      e.printStackTrace();
+    }
+		//one等待two执行完毕，然后one执行完毕。
+  }
+  
+}
+public class ThreadTwo extends Thread{
+  public void run(){
+    try{
+      Thread.sleep(5000);//two的执行过程就是睡5秒。            ------//Thread.sleep()要try-catch
+    }catch(InterruptedException e){
+      e.printStackTrace();
+    }
+  }
+}
+```
+
+4. one对two有两次操作：
+   * join时允许two进入线程，并且two先执行。
+   * two执行完毕。或，one等待2000毫秒后，把two推出，自己继续执行。
+5. 此时加入three：
+
+```java
+/** 
+ * 线程3的设计目的：在two的执行过程中，在one推出two之前，three把two锁定
+ * synchronized锁的使用方法：
+ *	 ①写在方法体上，谁调用这个方法，就锁谁。这里锁的就是ThreadThree对象，这显然不满足我们的目的。
+ *	 ②方法内，synchronized(要锁定的对象){}。这个符合我们的需要。
+ */
+public class ThreadThree extends Thread{
+  ThreadTwo two;
+  public ThreadThree(ThreadTwo two){
+    this.two = two;
+  }
+  public void run(){ 
+    synchronized(two){ //锁定two
+      try{
+        Thread.sleep(10000);//three睡眠10秒
+      }catch(InterrupedException e){
+        e.printStackTrace();
+      }
+      //two被释放
+    }
+    //three执行结束
+  }
+}
+
+public class ThreadTwo extends Thread{
+  public void run(){
+    ThreadThree three = new ThreadThree(this);  //在two中new一个three对象，用于锁定自己
+    three.start();
+    try{
+      Thread.sleep(5000);//two的执行过程就是睡5秒。            ------//Thread.sleep()要try-catch
+    }catch(InterruptedException e){
+      e.printStackTrace();
+    }
+  }
+}
+```
+
+* 此时，线程one启动 -> two启动 -> three启动。
+* two加入one -> 2秒后，one要将two推出，却发现two被其他对象锁定 -> one只能等待其他对象把two释放后，才能推出。
+* two在被锁定时执行完毕，结束 -> three锁定two结束，释放two -> three结束 -> one推出two，one执行结束。
+
+```java
+one start.
+two start.
+three start.
+two is locked.
+two end.
+two is free.
+three end.
+one end.
+```
+
+* 锁非常厉害：一旦对象被锁定，不释放的情况下，其他对象都必须等待。
+* 锁可能会产生死锁的问题。
+  * 死锁：所有线程都在互相等待，僵持。
+
+join源码：
+
+```java
+public final synchronized void join(long millis){
+  long base = System.currentTimeMillis();
+	long now = 0;
+  if(millis<0){
+    throw new IllegalArgumentException("timeout value is negative");//等待时间不能为负数
+  }
+  
+  while(isAlive()){ //join(0)走这个分支
+    wait(0); 
+  }else{            //join(2000)走这个分支
+    while(isAlive()){
+      long delay = millis-now; //2000-0==2000毫秒
+      if(delay<=0){
+        break;
+      }
+      wait(delay);
+      now = System.currentTimeMillis()-base;
+    }
+  }
+}
+
+public final synchronized void join() throws InterrupedException{
+  join(0);
+}
+```
+
+* **final**：方法不能被重写
+
+* **synchronized**：锁。**谁调用这个方法，谁被锁定。谁锁定它？谁访问了这个被锁定的对象，就是谁锁的。**
+
+  * two调用了join方法：
+
+  * ```java
+    while(isAlive()){//two.isAlive()==true
+      wait(0);//this.wait() --> two.wait() --> two调用wait()，不是two等着，是访问two对象的线程等着 --> one等着
+    }
+    ```
+
+  * wait(0)：一直等着。wait(2000)：等待2000毫秒。
+
+  * **wait() 方法是Object类的方法，并且是public final nativ void方法。**
+
+* **方法重载**：
+
+  * **.join() 无参数：**表示一直等two执行完，one才执行
+  * **.join(2000) 有参数：**表示one等待two2000毫秒时间，然后不再等待，将two推出，自己继续执行。
+
+## 四、死锁
+
+![image-20210114215552089](DUYI_java_iii_IO+Threads+GUI.assets/image-20210114215552089.png)
+
+经典死锁模型：哲学家就餐问题。
+
+可能产生的结果：
+
+1. 有的哲学家率先拿到左右的筷子，吃完，释放筷子，其他哲学家逐步拿到已吃完的哲学家释放的筷子，任务顺利完成。
+2. 所有哲学家同时，都先拿到左手筷子，全在等待右手筷子 —— 死锁。
+
+解决死锁的问题：
+
+1. 礼让 —— 产生时间差
+2. 不要产生对象公用的问题
+
+## 五、Timer计时器 - java.util
+
+一个线程应用。Timer是一个线程类。
+
+```java
+Timer timer = new Timer();//启动一个小线程，做记录，每隔一段时间。
+timer.schedule(TimerTask task, Date firstTime, long delay, long period); //毫秒值
+
+//使用.schedule()方法:
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+Date firstTime = sdf.parse("2019-01-31 11:50:00");//.parse()方法将String转换成Date类型
+Timer.schedule(new TimerTask(){
+  public void run(){
+    for(int i=0;i<10;i++){
+      System.out.println("给"+i+"发送了一条垃圾信息");
+    }
+  }
+}, firstTime, 3000);
+```
+
+* TimerTask是一个抽象类，不能new对象，所以此处是一个匿名内部类。即，这个匿名内部类是TimerTask类的子类-具体类，并且没有名字。
 
