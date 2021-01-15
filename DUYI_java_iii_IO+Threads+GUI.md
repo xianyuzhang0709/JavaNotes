@@ -882,3 +882,72 @@ Timer.schedule(new TimerTask(){
 - 死亡状态:
 
   一个运行状态的线程完成任务或者其他终止条件发生时，该线程就切换到终止状态。
+
+# 反射 reflect
+
+底层的技术——反射技术。
+
+String类是一种特殊的引用类型。String s = "abc";  new;
+
+* 不可变特性：长度，内容（public final class String{ private final char value[]; ...} )
+
+* 但是String可以通过反射改变value值
+
+反射 reflect：
+
+![image-20210115104922939](DUYI_java_iii_IO+Threads+GUI.assets/image-20210115104922939.png)
+
+* 类是用来描述对象的
+* 反射机制用来描述一组类
+  * Class  描述类本身
+  * Field  描述类的属性
+  * Method  描述类的方法
+  * Constructor  描述类的构造方法
+  * Annotation  描述类的注解@Override (注解可以放在类的上面、属性上、方法上、构造函数上、参数前)
+  * Package  描述类所属的包
+
+1. 如何获取Class
+   * Class clazz = Class.forName("包名.类名");  //类全名
+   * Class clazz = 类名.class;
+   * Class clazz = 对象变量.getClass();  //Object类中的方法
+
+2. Class常用方法
+
+   * .getModifiers() -> int  //每个修饰符用一个整数来表示：
+     * 0默认不写  1public  2private  4protected  8static  16final  32synchronized  64volatile  128transient  256native  512interface  1024abstract
+
+   * .getName() -> String类全名
+   * .getSimpleName() -> String类名
+   * .getPackage() -> Package  获取包
+   * .getSuperClass() -> Class  获取父类
+
+   * .getInterfaces() -> Class[]  获取所有接口
+   * .newInstance() -> Object  调用无参数构造器，构造一个对象，但需要造型
+     * Person p = (Person) Class.forName("Person").newInstance();  
+
+   * .getField(String "属性名") -> Field nameField 获取属性
+
+     * 这个Field属性：.getModifiers() -> int 获得属性自己的修饰符
+     * .getType() -> Class 获取属性所属的类
+     * .getName() -> String 获取属性名
+     * 操作属性：
+     * **nameField.set**((Person)Class.forName("testReflect.Person").newInstance(), "zhang"); 用一个属性对象，给一个类对象赋值
+     * **nameField.get**(p);
+
+     > 正常创建对象和属性赋值：
+     >
+     > * 对象 = new();
+     >
+     > * 对象.属性 = 值;  //赋值
+     >
+     > * 值 = 对象.属性;  //取值
+     >
+     > Field获得属性对象和赋值：
+     >
+     > * 属性对象 = 类.getField();
+     > * 属性对象.set(哪个类对象,值);   //赋值
+     > * 值 = 属性对象.get(哪个类对象);  //取值
+
+   * .getFields() -> Field[] 获取所有属性
+
+   * 
