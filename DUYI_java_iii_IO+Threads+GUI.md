@@ -917,7 +917,7 @@ String类是一种特殊的引用类型。String s = "abc";  new;
      
 * 0默认不写  1public  2private  4protected  8static  16final  32synchronized  64volatile  128transient  256native  512interface  1024abstract
      
-   * .getName() -> String类全名
+   * .getName() -> String类全名（包括包名）
    
    * .getSimpleName() -> String类名
 
@@ -927,13 +927,15 @@ String类是一种特殊的引用类型。String s = "abc";  new;
 
    * .getInterfaces() -> Class[]  获取所有接口
 
+   * `-------------------------------------------------------------------------------------------------`
+   
    * .newInstance() -> Object  调用无参数构造器，构造一个对象，但需要造型
      
    * Person p = (Person) Class.forName("Person").newInstance();  
      
-   * .getField(String "属性名") -> Field nameField 获取属性
+* .getField(String "属性名") -> Field nameField 获取属性
    
-  * 这个Field属性：.getModifiers() -> int 获得属性自己的修饰符
+     * 这个Field属性：.getModifiers() -> int 获得属性自己的修饰符
      * .getType() -> Class 获取属性所属的类
      * .getName() -> String 获取属性名
      * 操作属性：
@@ -945,11 +947,11 @@ String类是一种特殊的引用类型。String s = "abc";  new;
      > * 对象 = new();
      >
      > * 对象.属性 = 值;  //赋值
-     >
+  >
      > * 值 = 对象.属性;  //取值
   >
      > Field获得属性对象和赋值：
-  >
+     >
      > * 属性对象 = 类.getField();
      > * 属性对象.set(哪个类对象,值);   //赋值
      > * 值 = 属性对象.get(哪个类对象);  //取值
@@ -984,4 +986,49 @@ String类是一种特殊的引用类型。String s = "abc";  new;
      ```
    
      * String长度不可变，但是值可以变。——然而这样做并没有什么意义。
+
+#### 知识回顾：类用来描述对象，反射用来描述类本身。
+
+![image-20210120210605672](DUYI_java_iii_IO+Threads+GUI.assets/image-20210120210605672.png)
+
+![image-20210120210828464](DUYI_java_iii_IO+Threads+GUI.assets/image-20210120210828464.png)
+
+![image-20210120210903423](DUYI_java_iii_IO+Threads+GUI.assets/image-20210120210903423.png)
+
+## 二、如何操作类中的方法
+
+```java
+public class Person{
+  public void eat(){...}
+  public void eat(String s){...}
+}
+```
+
+1. 获取Person对应的类：Class clazz = Person.class;
+2. 通过clazz，提供方法名定位方法：Method m = clazz.**getMethod**("方法名", 方法形参所属的类...);
+   * 方法名："eat"
+   * 方法形参所属的类：无参的eat方法——不写；有参数的eat方法——String.class
+   * eg: Method m = clazz.getMethod("eat", String.class);
+   * **可以获取公有方法（自己类+父类）**
+
+3. Method的方法：
+
+   1. m.getModifiers() --> int
+   2. m.getName() --> String
+   3. m.getReturnType() --> Class
+   4. m.getParameterTypes() --> Class[]  参数列表
+   5. m.getExceptionTypes() --> Class[]  异常类型列表
+   6. m.getAnnotation()
+   7. m.invoke(p对象) -> 返回值都是Object  （所以需要造型才可以使用返回值）
+      * 方法.执行(本类对象，执行方法需要传递的参数列表...)
+
+4. clazz.getMethods() --> Method[]  获取所有方法（公有）
+
+5. clazz.**getDeclaredMethod**("name", 参数列表...) --> Method  获得声明的方法（包括私有的也可以访问到）
+
+6. clazz.**getDeclaredMethods**() --> Method[]
+
+   8. m.setAccessible(true)
+
+   9. m.invoke(p)  ---> 私有方法也可以调用
 
