@@ -244,7 +244,7 @@ File file = new File("D://test//test.txt");  //file与test.txt形成了映射关
 
 3. .read(byte[], int off, int len) --> int
 4. .avaliable() 流管道中有多少缓存的字节（并不是文件中的字节，而是流管道中读取了文件的多少字节）
-   
+  
    * 可能在读取网络数据的时候，流管道中的字节数可能会有问题。不一定是同一批一起来的。
 5. .skip(long n) 跳过几个字节 --> long(一般这个返回值不接收)
    * 多线程：利用几个线程同时读取文件
@@ -914,26 +914,32 @@ String类是一种特殊的引用类型。String s = "abc";  new;
 2. Class常用方法
 
    * .getModifiers() -> int  //每个修饰符用一个整数来表示：
-     * 0默认不写  1public  2private  4protected  8static  16final  32synchronized  64volatile  128transient  256native  512interface  1024abstract
-
+     
+* 0默认不写  1public  2private  4protected  8static  16final  32synchronized  64volatile  128transient  256native  512interface  1024abstract
+     
    * .getName() -> String类全名
+   
    * .getSimpleName() -> String类名
+
    * .getPackage() -> Package  获取包
+   
    * .getSuperClass() -> Class  获取父类
 
    * .getInterfaces() -> Class[]  获取所有接口
+
    * .newInstance() -> Object  调用无参数构造器，构造一个对象，但需要造型
-     * Person p = (Person) Class.forName("Person").newInstance();  
-
+     
+   * Person p = (Person) Class.forName("Person").newInstance();  
+     
    * .getField(String "属性名") -> Field nameField 获取属性
-
-     * 这个Field属性：.getModifiers() -> int 获得属性自己的修饰符
+   
+  * 这个Field属性：.getModifiers() -> int 获得属性自己的修饰符
      * .getType() -> Class 获取属性所属的类
      * .getName() -> String 获取属性名
      * 操作属性：
      * **nameField.set**((Person)Class.forName("testReflect.Person").newInstance(), "zhang"); 用一个属性对象，给一个类对象赋值
      * **nameField.get**(p);
-
+   
      > 正常创建对象和属性赋值：
      >
      > * 对象 = new();
@@ -941,13 +947,41 @@ String类是一种特殊的引用类型。String s = "abc";  new;
      > * 对象.属性 = 值;  //赋值
      >
      > * 值 = 对象.属性;  //取值
-     >
+  >
      > Field获得属性对象和赋值：
-     >
+  >
      > * 属性对象 = 类.getField();
      > * 属性对象.set(哪个类对象,值);   //赋值
      > * 值 = 属性对象.get(哪个类对象);  //取值
+   
+   * .**getFields**() -> Field[] 获取所有属性 （只能获取公有属性，本类和父类的公有属性）
+   
+   * .**getDeclaredField**(String fieldName) -> Field[] 获取声明的属性（只能获取本类声明的属性，不能获取父类的属性）
+   
+     * 这种Field，不能用set赋值——叫产生IllegalAccessException
+     * 给这个Field f，设置**.setAccessible(true)**。这个Field就可以set了。
+   
+   * 所以，反射可以改变String：
+   
+     ```java
+     public class ChangeStringValue{
+       public static void main(String[] args){
+         String str = "anc";
+         //反射可以获取私有属性，可以操作私有属性
+         //1. 获取String类
+         Class clazz = str.getClass();
+         //2. 获取String类的value属性
+         Field field = clazz.getDeclaredField("value");
+         //3. 设置私有属性可以被操作
+         field.setAccessible(true);
+         //4. 获取value值——应该是个数组的地址
+         char[] temp = (char[])field.get(str);
+         //5. 设置数组的每个值
+         temp[0]='z'; temp[1]='x';temp[2]='y';
+         System.out.println(str);//zxy
+       }
+     }
+     ```
+   
+     * String长度不可变，但是值可以变。——然而这样做并没有什么意义。
 
-   * .getFields() -> Field[] 获取所有属性
-
-   * 
