@@ -987,7 +987,7 @@ String类是一种特殊的引用类型。String s = "abc";  new;
    
      * String长度不可变，但是值可以变。——然而这样做并没有什么意义。
 
-#### 知识回顾：类用来描述对象，反射用来描述类本身。
+## 一、知识回顾：类用来描述对象，反射用来描述类本身。
 
 ![image-20210120210605672](DUYI_java_iii_IO+Threads+GUI.assets/image-20210120210605672.png)
 
@@ -1052,8 +1052,8 @@ public class Person{
 
 Spring开源框架：
 
-* IOC控制反转——inversion of control 对象的控制权反转
-* DI依赖注入
+* IOC控制反转——inversion of control 对象的控制权从new手里，转移到别人手里（反转）
+* DI依赖注入：属性自动注入
 * AOP面向切面
 
 设计一个方法，帮我们控制对象的创建：
@@ -1107,3 +1107,51 @@ Person p = (Person)spring.getBean("ioc.Person");//获得对象
 * char单独判断，单独处理
 * 属性是数组、集合、对象都处理不了。
 
+# 注解Annotation
+
+注释：//       /* 多行注释  */       /**  文档注释 */
+
+1. 写法： 
+
+   ```java
+   @XXX[(一些信息)]
+   ```
+
+2. 放置在哪里：
+
+   * 类的上面
+   * 类成员的上面（属性、方法、构造方法）块上不写注解
+   * 参数前面
+
+3. 作用：
+
+   * 用来充当注释（仅仅为一个文字说明）
+   * 用来做代码的检测（验证），eg：@override
+   * 可以携带一些信息（内容），文件、注解。
+     * 文件：.properties或.xml  开发时容易，修改更灵活
+     * 注解：开发时容易
+
+4. java中一些人家写好的注解我们使用：
+
+   1. @Deprecated  方法是废弃的
+
+   2. @Override  代码检测，检测此方法是否是一个重写
+
+   3. @SuppressWarnings(信息)   信息是String[]：比如 {"",""} 。如果数组内只有一个对象，就不用写大括号
+
+      * ("unused")：变量定义后没有使用
+
+      * ("serial")：实现了序列化接口，但没有写版本号
+
+      * > 对象的序列化：Serializable，用来说明java版本号：
+        >
+        > private static final long serialVersionID = 1L;
+
+      * ("rawtypes")：集合没有定义泛型类型
+
+        ```java
+        @SuppressWarning("rawtypes")
+        ArrayList list = new ArrayList();
+        ```
+
+        
