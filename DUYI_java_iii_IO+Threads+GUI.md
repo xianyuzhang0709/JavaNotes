@@ -1130,8 +1130,8 @@ Person p = (Person)spring.getBean("ioc.Person");//获得对象
    * 用来充当注释（仅仅为一个文字说明）
    * 用来做代码的检测（验证），eg：@override
    * 可以携带一些信息（内容），文件、注解。
-     * 文件：.properties或.xml  开发时容易，修改更灵活
-     * 注解：开发时容易
+     * 文件：.properties或.xml  ——> 好处在于代码包装起来jar，文件还可以修改。不好处是源代码和配置文件分开，读改麻烦。
+     * 注解：开发时容易 ——> 读写或调整容易。不好在于，代码包装起来后，注解内携带的信息不能修改。
 
 4. java中一些人家写好的注解我们使用：
 
@@ -1233,3 +1233,104 @@ Person p = (Person)spring.getBean("ioc.Person");//获得对象
 
 ![image-20210121135342998](DUYI_java_iii_IO+Threads+GUI.assets/image-20210121135342998.png)
 
+8. 解析注解中的信息(需要反射技术)
+
+   ```java
+   public class Person{
+     @MyAnnotation({"zhxy","18","female"})   //这就是一个new的注解对象
+     private String name;
+   }
+   
+   public class TestMain{
+     public static void main(String[] args){
+       try{
+         //利用反射获得注解对象
+         Class clazz = Person.class;
+     		Field field = clazz.getDeclaredField("name");
+         MyAnnotation a = (MyAnnotation)field.getAnnotation(MyAnnotation.class);//要找MyAnnotation类型的注解
+         //方法一：对象调用方法 —— 利用a对象，执行以下test方法
+         String[] values = a.test();
+         System.out.println(values);//zhxy
+         //方法二：利用反射，执行a中的value方法
+         Class aClazz = a.getClass();
+         Method am = aClazz.getMethod("test");
+         //am.invoke(对象，参数); -> 对象就是a，参数无。
+         String[] values = (String[])am.invoke(a);//invoke方法返回的类型是Object类型
+       }catch(Exception e){
+         e.printStackTrace();
+       }
+     }
+   }
+   ```
+
+9. IOC——用注解存放对象属性值
+
+   ```java
+   package ioc;
+   public class Person{ //实体对象: 只有属性且类型是基本类型+String。没有方法，没有逻辑，只有构造函数。
+     private String name;
+     private Integer age;
+     private String sex;
+     
+     @MyAnnotation({"zhang","18","male"})
+     public Person(){}
+     
+     //方法：getName()   setName()
+     //     getAge()    setAge()
+     //     getSex()    setSex()
+   }
+   ```
+
+   设计一个方法：给一个类名字，返回一个对象，对象有属性值。
+
+   ```java
+   public class MySpring{
+     public Object getBean(String className){
+   		Object obj = null;
+       try{
+         Class clazz = Class.forName(className);
+         //obj = clazz.newInstance();
+         Constructor con = clazz.getConstructor();
+         obj = con.newInstance();
+         //给对象的属性赋值
+         Annotation a = con.getAnnotation(MyAnnotation.class);
+         Class aClazz = a.getClass();
+         Method am = aclazz.getMethod("test");
+         String[] values = (String[])am.invoke(a);
+         //赋值：找到属性对应的set方法进行赋值
+         Field[] field = clazz.getDeclaredFields();
+         for(int i=0; i<field.length;i++){
+           //获取属性名
+           String fieldName = field[i].getName();
+           String first = fieldName.subString(0,1).toUpperCase();
+           String other = fieldName.subString(1);
+           String setMethod = new StringBuidler("set");
+           setMethod.append(first);
+           setMethod.append(other);
+           Method m = clazz.getMethod(setMethod.toString(),field.getType());
+           //执行找到的set方法: 但要注意String参数传入对应方法处理:找到field所在类带String参数的构造函数->创建对象
+           //m.invoke(obj, values[i]);
+         	m.invoke(obj, field.getType().getConstructor(String.class).newInstance(value[i]));
+         }
+       }catch(...){
+         ...
+       }
+     }
+   }
+   ```
+
+   使用：
+
+   ```java
+   Person p = (Person)(new MySpring().getBean("ioc.Person"));
+   ```
+
+   缺点：
+
+   * 只能处理八个包装类（char还没处理），数组集合对象不能处理。通用性不够。
+
+作业：
+
+试着用文件流存值。
+
+![image-20210121153424655](DUYI_java_iii_IO+Threads+GUI.assets/image-20210121153424655.png)
