@@ -995,7 +995,7 @@ String类是一种特殊的引用类型。String s = "abc";  new;
 
 ![image-20210120210903423](DUYI_java_iii_IO+Threads+GUI.assets/image-20210120210903423.png)
 
-## 二、如何操作类中的方法
+## 二、如何操作类中的方法Method
 
 ```java
 public class Person{
@@ -1031,4 +1031,79 @@ public class Person{
    8. m.setAccessible(true)
 
    9. m.invoke(p)  ---> 私有方法也可以调用
+
+## 三、如何操作类中的构造方法Constructor
+
+1. 找到类：Class clazz = Person.class;
+2. 找到构造方法：Constructor con = clazz.getConstructor([Class...参数列表类型])。
+   * 类名省略不用写，只需要参数列表。如果是无参的构造函数，就不用写任何参数。
+   * clazz.getConstructors()
+   * clazz.getDeclaredConstructor()
+   * clazz.getDeclaredConstructors()
+
+3. con.getModifiers()
+4. con.getName()
+5. con.getParameterTypes()
+6. con.getExceptionTypes()
+7. 操作构造方法：
+   1. con.newInstance(参数) --> Object
+
+## 四、案例
+
+Spring开源框架：
+
+* IOC控制反转——inversion of control 对象的控制权反转
+* DI依赖注入
+* AOP面向切面
+
+设计一个方法，帮我们控制对象的创建：
+
+* 是否需要参数？String 类全名
+* 是否需要返回值？对象Objetc
+
+```java
+package ioc;
+public class MySpring{
+  public Object getBean(String className){
+    Object obj = null;
+    Scanner input = new Scanner(System.in);
+    System.out.println("请给"+className+"类的对象赋值")
+    try{
+      Class clazz = Class.forName(className);
+      obj = clazz.newInstance(); //几乎每个类都有无参数构造——所以要习惯上写无参构造器
+      //在这里做一个自动DI注入，对象中的所有属性赋值(包括私有属性)——一般用set方法或构造方法
+      //1. 找到所有的set方法，给属性赋值
+      Field[] fields = clazz.getDeclaredFields();
+      for(Field field: fields){
+        String fieldName = field.getName();
+        String first = fieldName.subString(0,1).toUpperCase();//属性首字母大写
+        String other = fieldName.subString(1);
+        StringBuilder builder = new StringBuilder("set");
+        builder.append(first);
+        builder.append(other);//得到了set方法的名字
+        Method setMethod = clazz.getMethods(builder.toString(),field.getType());//方法名，方法的参数所在类...
+        System.out.println("请给"+fieldName+"属性提供值");
+        String value = input.nexLine();
+        //八个基本类型，七个有带String的构造方法
+        Constructor c = fieldClass.getConstructor(String.class);
+        setMethod.invoke(obj,con.newInstance(value));//对象，值  //问题①：->
+      }
+      
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    return obj;
+  }
+}
+```
+
+```java
+Spring spring = new MySpring();
+Person p = (Person)spring.getBean("ioc.Person");//获得对象
+```
+
+问题①：在转换值类型的时候遇到问题——所以类里的属性不要写基本类型，而写包装类。
+
+* char单独判断，单独处理
+* 属性是数组、集合、对象都处理不了。
 
