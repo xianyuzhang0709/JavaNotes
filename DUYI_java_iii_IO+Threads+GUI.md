@@ -1111,6 +1111,8 @@ Person p = (Person)spring.getBean("ioc.Person");//获得对象
 
 注释：//       /* 多行注释  */       /**  文档注释 */
 
+注解：
+
 1. 写法： 
 
    ```java
@@ -1121,7 +1123,7 @@ Person p = (Person)spring.getBean("ioc.Person");//获得对象
 
    * 类的上面
    * 类成员的上面（属性、方法、构造方法）块上不写注解
-   * 参数前面
+   * 参数/变量前面
 
 3. 作用：
 
@@ -1137,7 +1139,9 @@ Person p = (Person)spring.getBean("ioc.Person");//获得对象
 
    2. @Override  代码检测，检测此方法是否是一个重写
 
-   3. @SuppressWarnings(信息)   信息是String[]：比如 {"",""} 。如果数组内只有一个对象，就不用写大括号
+   3. @SuppressWarnings(信息)   去除警告
+
+      1. 信息是String[]：比如 {"",""} 。如果数组内只有一个对象，就不用写大括号
 
       * ("unused")：变量定义后没有使用
 
@@ -1154,4 +1158,78 @@ Person p = (Person)spring.getBean("ioc.Person");//获得对象
         ArrayList list = new ArrayList();
         ```
 
-        
+      * ("deprecation")：方法已废弃
+      * ("unchecked")
+
+      * ("all")：所有的警告 ----> 不推荐使用！！
+
+5. 注解中可以携带信息，可以不携带
+
+   1. 信息不能随便写，信息的类型只能是：
+      * 基本数据类型
+      * String
+      * 枚举enum
+      * 注解类型
+      * 数值类型[]  数组里只能是如上四种
+
+6. 如何描述一个注解类型
+
+   * 关键词：@interface
+
+   * 目的：让注解携带一些信息或内容
+
+   * 和interface相似：可以描述public static final属性和public abstract方法
+
+   * ```java
+     public @interface MyAnnotation{
+       public static final int field = 1;//属性，很少见 
+       String test();//抽象方法：默认public abstract，必须有返回类型，不能void，且类型必须是上面那些（不能是包装类）
+     	//方法必须传递。方法的作用是把我们的信息传递给别人。这个String是
+     }
+     
+     ```
+
+   * 我们自己定义的注解如果想拿来使用，光定义一个注解类还不够，还需要用元注解来辅助说明：
+
+     * @Target({ElementType.FIELD,ElementType.Method,...})  可以放在哪里。{枚举类型}
+
+       * ```java
+         import static java.lang.annotation.ElementType.*; //静态导入
+         @Target("FIELD,METHOD");//可以不用写ElementType.了。
+         ```
+
+     * @Retention(RetentionPolicy.RUNTIME) 描述当前这个注解存在的作用域
+
+       * 源代码 ——> 编译 ——> 字节码文件 ——> 加载 ——> 内存执行
+       * SOURCE                               CLASS                                     RUNTIME
+
+     * @Inherited 描述当前这个注解是否能被子类对象继承
+
+     * @Document 描述是否能被文档所记录
+
+7. 使用自己描述的注解类
+
+   ```java
+   public class Test{
+     @Myannotation(test="abc")
+     public static void test1(){
+       ......
+     }
+   }
+   ```
+
+   
+
+   问题1：在注解里描述了一个方法，方法没有参数，只有返回值String[]。使用注解时，却让我们传参数
+
+   * 理解为：注解的方法，是将文明传递给它的参数，搬运走，给别人
+
+   问题2：别人写的注解不用写方法名，我们自己写的却需要写名字
+
+   * 如果我们自己定义的注解只有一个方法，就可以省略方法名
+   * 如果传递的信息是一个数组，数组内只有一个元素，可以省略大括号{}
+   * 如果我们的注解类有两个方法：@MyAnnotation(value="abc", num=13)
+     * 先后顺序无所谓
+
+![image-20210121135342998](DUYI_java_iii_IO+Threads+GUI.assets/image-20210121135342998.png)
+
