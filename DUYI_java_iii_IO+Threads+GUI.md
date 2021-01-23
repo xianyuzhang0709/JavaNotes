@@ -1334,3 +1334,4 @@ Person p = (Person)spring.getBean("ioc.Person");//获得对象
 试着用文件流存值。
 
 ![image-20210121153424655](DUYI_java_iii_IO+Threads+GUI.assets/image-20210121153424655.png)
+
