@@ -33,5 +33,16 @@ git clone https://github.com/xianyuzhang0709/reborn.git
 cd C_Notes/
 git push
 fatal: bad numeric config value '“false”' for 'http.sslverify': invalid unit
+git config --global http.sslverify false
+git push 
+成功push C_Notes
+cd ..
+cd Java_Notes/
+git push
+fatal: unable to access 'https://github.com/xianyuzhang0709/JavaNotes.git/': LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to github.com:443 
+git config --global --add remote.origin.proxy ""
+没用
+git config --global --unset-all remote.origin.proxy
+git push 成功
 ```
 
