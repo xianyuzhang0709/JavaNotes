@@ -46,3 +46,22 @@ git config --global --unset-all remote.origin.proxy
 git push 成功
 ```
 
+
+
+2020.3.11
+
+```c
+c-slides git push 不成功
+报错：LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to github.com:443
+
+设置了http，所以要禁用这部分设置：
+git config --global --unset http.proxy
+
+重新push
+失败
+  
+git config --global --unset-all remote.origin.proxy
+git push 失败
+app提交，成功。
+```
+
